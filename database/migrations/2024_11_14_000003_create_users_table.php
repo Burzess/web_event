@@ -12,14 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->uuid('role')->nullable();
+            $table->uuid('organizer')->nullable();
+            $table->foreign('role')->references('id')->on('roles')->onDelete('set null');
+            $table->foreign('organizer')->references('id')->on('organizers')->onDelete('set null');
+            $table->string('refresh_token')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('users_refresh_token', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('token');
+            $table->string('refresh_token');
+            $table->uuid('users');
+            $table->foreign('users')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
+        });        
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -45,5 +57,6 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('users_refresh_token');
     }
 };
