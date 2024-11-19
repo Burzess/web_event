@@ -12,34 +12,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('participants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('status')->nullable();
             $table->string('active_code')->nullable();
             $table->timestamps();
-        });     
-
+        });
+        
         Schema::create('participant_forgot_password', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->string('code');
             $table->string('status');
             $table->string('active_code')->nullable();
-            $table->uuid('participant')->nullable();
-            $table->foreign('participant')->references('id')->on('participants')->onDelete('cascade');
-            $table->timestamps();
-        });        
-        
-        Schema::create('participant_refresh_token', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('token');
-            $table->string('refresh_token');
-            $table->uuid('participant')->nullable();
-            $table->foreign('participant')->references('id')->on('participants')->onDelete('cascade');
+            $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('cascade');
             $table->timestamps();
         });
         
+        Schema::create('participant_refresh_token', function (Blueprint $table) {
+            $table->id(); 
+            $table->string('token');
+            $table->string('refresh_token');
+            $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('cascade');
+            $table->timestamps();
+        });
+ 
     }
 
     /**

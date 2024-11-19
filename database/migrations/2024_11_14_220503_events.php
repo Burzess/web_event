@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->string('title');
             $table->date('date');
             $table->text('about');
@@ -20,16 +20,12 @@ return new class extends Migration
             $table->json('keypoint')->nullable();
             $table->string('venue_name');
             $table->enum('status', ['active', 'inactive']);
-            $table->uuid('categories')->nullable();
-            $table->uuid('image')->nullable();
-            $table->uuid('talent')->nullable();
-            $table->uuid('organizer')->nullable();
-            $table->foreign('categories')->references('id')->on('categories')->onDelete('set null');
-            $table->foreign('image')->references('id')->on('images')->onDelete('set null');
-            $table->foreign('talent')->references('id')->on('talents')->onDelete('set null');
-            $table->foreign('organizer')->references('id')->on('organizers')->onDelete('set null');
+            $table->foreignId('categories')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('image')->nullable()->constrained('images')->onDelete('set null');
+            $table->foreignId('talent')->nullable()->constrained('talents')->onDelete('set null');
+            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null');
             $table->timestamps();
-        });        
+        });             
     }
 
     /**

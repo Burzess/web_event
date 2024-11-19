@@ -12,26 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->uuid('role')->nullable();
-            $table->uuid('organizer')->nullable();
-            $table->foreign('role')->references('id')->on('roles')->onDelete('set null');
-            $table->foreign('organizer')->references('id')->on('organizers')->onDelete('set null');
+            $table->rememberToken();
+            $table->foreignId('role')->nullable()->constrained('roles')->onDelete('set null'); // Menggunakan foreignId untuk role
+            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null'); // Menggunakan foreignId untuk organizer
             $table->string('refresh_token')->nullable();
             $table->timestamps();
         });
+        
 
         Schema::create('users_refresh_token', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('token');
             $table->string('refresh_token');
-            $table->uuid('users');
-            $table->foreign('users')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('users')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-        });        
+        });
+        
+              
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

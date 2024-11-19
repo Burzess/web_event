@@ -12,15 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->string('name');
             $table->boolean('status');
-            $table->uuid('image')->nullable();
-            $table->uuid('organizer')->nullable();
-            $table->foreign('image')->references('id')->on('images')->onDelete('set null');
-            $table->foreign('organizer')->references('id')->on('organizers')->onDelete('set null');
+            $table->foreignId('image')->nullable()->constrained('images')->onDelete('set null');
+            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null');
             $table->timestamps();
-        });        
+        });       
     }
 
     /**

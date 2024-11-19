@@ -12,18 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->date('date');
             $table->string('status');
             $table->integer('total_pay');
             $table->integer('total_order_ticket');
-            $table->uuid('participant')->nullable();
-            $table->uuid('event')->nullable();
+            $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('set null');
+            $table->foreignId('event')->nullable()->constrained('events')->onDelete('set null');
             $table->json('personalDetail')->nullable();
-            $table->foreign('participant')->references('id')->on('participants')->onDelete('set null');
-            $table->foreign('event')->references('id')->on('events')->onDelete('set null');
             $table->timestamps();
-        });        
+        });             
     }
 
     /**

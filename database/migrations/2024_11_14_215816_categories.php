@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,10 +11,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); // Tipe data BIGINT
             $table->string('name');
-            $table->uuid('organizer')->nullable();
-            $table->foreign('organizer')->references('id')->on('organizers')->onDelete('set null');
+            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null'); // Menggunakan foreignId untuk tipe data yang sesuai
             $table->timestamps();
         });        
     }

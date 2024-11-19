@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ticket_categories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->integer('price');
             $table->integer('stock');
             $table->integer('sum_ticket');
             $table->enum('status', ['available', 'sold out']);
-            $table->uuid('event')->nullable();
-            $table->foreign('event')->references('id')->on('events')->onDelete('cascade');
+            $table->foreignId('event')->nullable()->constrained('events')->onDelete('cascade');
             $table->timestamps();
-        });        
+        });           
     }
 
     /**

@@ -12,13 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('talents', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id(); 
             $table->string('name');
-            $table->uuid('organizer')->nullable();
-            $table->uuid('image')->nullable();
-            $table->uuid('role')->nullable();
-            $table->foreign('organizer')->references('id')->on('organizers')->onDelete('set null');
-            $table->foreign('image')->references('id')->on('images')->onDelete('set null');
+            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null');
+            $table->foreignId('image')->nullable()->constrained('images')->onDelete('set null');
+            $table->foreignId('role')->nullable()->constrained('roles')->onDelete('set null');
             $table->timestamps();
         });        
     }
