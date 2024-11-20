@@ -26,17 +26,20 @@ Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [LoginController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
-    
-    Route::middleware(['auth:admin'])->group(function () {
-        Route::get('/dashboard', function() {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
 
+    
         // Roles CRUD
         Route::resource('roles', RoleController::class);
 
         // Organizers CRUD
         Route::resource('organizers', OrganizerController::class);
+        
+        Route::get('/dashboard', function() {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+        
+    Route::middleware(['auth:admin'])->group(function () {
+
     });
 });
 

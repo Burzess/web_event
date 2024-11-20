@@ -12,13 +12,27 @@ window.addEventListener("DOMContentLoaded", (event) => {
                 .getElementById("editRoleForm")
                 .getAttribute("action")
                 .replace(":id", roleId);
-                console.log(formAction);
-                
+            console.log(formAction);
+
             document
                 .getElementById("editRoleForm")
                 .setAttribute("action", formAction);
         });
     });
+
+    document.getElementById("editRoleForm").addEventListener("submit", function (event) {
+        const roleName = document.getElementById("editRoleName").value;
+        const errorMessage = document.getElementById("error-message");
+
+        
+        if (/\d/.test(roleName)) {
+            event.preventDefault(); 
+            errorMessage.style.display = 'block'; 
+        } else {
+            errorMessage.style.display = 'none'; 
+        }
+    });
+
 
     // Edit Organizer
     const editOrganizerButtons = document.querySelectorAll(

@@ -31,6 +31,8 @@
                 <h5 class="modal-title" id="editRoleModalLabel">Edit Role</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div id="error-message" style="color: red; display: none;">Nama peran tidak boleh mengandung angka.</div>
+
             <form id="editRoleForm" action="{{ route('roles.update', ':id') }}" method="POST">
                 @csrf
                 @method('PUT')
