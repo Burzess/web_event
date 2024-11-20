@@ -10,7 +10,7 @@ class OrganizerController extends Controller
     // Menampilkan semua organizers
     public function index()
     {
-        $organizers = Organizer::all(); // Ambil semua data organizer
+        $organizers = Organizer::all();
         return view('organizers.index', compact('organizers'));
     }
 
