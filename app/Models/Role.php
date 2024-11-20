@@ -9,5 +9,9 @@ class Role extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name']; // Mengizinkan mass assignment untuk kolom 'name'
+    protected $fillable = ['name'];
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
 }

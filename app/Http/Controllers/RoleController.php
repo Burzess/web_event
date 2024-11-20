@@ -10,7 +10,7 @@ class RoleController extends Controller
     // Menampilkan semua roles
     public function index()
     {
-        $roles = Role::all(); // Ambil semua data role
+        $roles = Role::all();
         return view('roles.index', compact('roles'));
     }
 

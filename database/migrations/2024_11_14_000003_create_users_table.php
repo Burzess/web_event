@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('refresh_token')->nullable();
             $table->timestamps();
         });
-        
 
         Schema::create('users_refresh_token', function (Blueprint $table) {
             $table->id();
@@ -56,9 +55,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('users_refresh_token');
+        Schema::dropIfExists('users');
     }
 };
