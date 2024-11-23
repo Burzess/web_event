@@ -4,21 +4,21 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrganizerController;
-use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\LoginController;
 use App\Models\User;
 use App\Models\Role;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+// Route::get('/', function () {
+//     return view('home');
+// })->name('home');
 
 Route::get('/login', function () {
     return view('pages.auth.login');
 })->name('login');
 
-Route::get('/app', function () {
-    return view('layouts.app');
-})->name('app');
+// Route::get('/app', function () {
+//     return view('layouts.app');
+// })->name('app');
 
 
 Route::prefix('admin')->group(function () {
@@ -37,7 +37,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/dashboard', function() {
             return view('admin.dashboard');
         })->name('admin.dashboard');
-        
+
     Route::middleware(['auth:admin'])->group(function () {
 
     });
