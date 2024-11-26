@@ -12,7 +12,7 @@
         <label for="email">Email</label>
         <input type="email" name="email" id="email" value="{{ $user->email }}" required>
         
-        <label for="password">Password (leave blank to keep current)</label>
+        <label for="password">Password (masukan password)</label>
         <input type="password" name="password" id="password">
         
         <label for="role">Role</label>

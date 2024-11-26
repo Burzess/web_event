@@ -11,10 +11,13 @@ class UserController extends Controller
 {
     // Menampilkan semua users
     public function index()
-    {
-        $users = User::with('role', 'organizer')->get();
-        return view('users.index', compact('users'));
-    }
+{
+    $users = User::with('role', 'organizer')->get();
+    return view('users.index', compact('users'));
+}
+
+    
+    
 
 
     // Menampilkan form untuk menambah user
@@ -27,27 +30,32 @@ class UserController extends Controller
 
 
     // Menyimpan user baru
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'nullable|exists:roles,id',
-            'organizer' => 'nullable|exists:organizers,id',
-        ]);
+   // Menyimpan user baru
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:5',
+        'role' => 'nullable|exists:roles,id',
+        'organizer' => 'nullable|exists:organizers,id',
+    ]);
 
+    try {
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'role' => $request->role,
             'organizer' => $request->organizer,
-            'refresh_token' => $request->refresh_token,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
+    } catch (\Exception $e) {
+        return redirect()->back()->withInput()->with('error', 'Failed to create user: ' . $e->getMessage());
     }
+}
+
 
     // Menampilkan form untuk mengedit user
     public function edit($id)
@@ -76,7 +84,6 @@ class UserController extends Controller
             'password' => $request->password ? bcrypt($request->password) : $user->password,
             'role' => $request->role,
             'organizer' => $request->organizer,
-            'refresh_token' => $request->refresh_token,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
