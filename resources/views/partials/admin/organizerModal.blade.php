@@ -31,6 +31,8 @@
                 <h5 class="modal-title" id="editOrganizerModalLabel">Edit Organizer</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div id="error-message" style="color: red; display: none;">Nama peran tidak boleh mengandung angka.</div>
+
             <form id="editOrganizerForm" action="{{ route('organizers.update', ':id') }}" method="POST">
                 @csrf
                 @method('PUT')

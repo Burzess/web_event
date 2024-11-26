@@ -32,12 +32,11 @@ class User extends Authenticatable
     // Menyatakan hubungan dengan tabel roles
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role');
     }
 
-    // Menyatakan hubungan dengan tabel organizers
     public function organizer()
     {
-        return $this->belongsTo(Organizer::class);
+        return $this->belongsTo(Organizer::class, 'organizer');
     }
 }

@@ -64,7 +64,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:5',
             'role' => 'nullable|exists:roles,id',
             'organizer' => 'nullable|exists:organizers,id',
         ]);
@@ -89,4 +89,16 @@ class UserController extends Controller
         $user->delete(); // Hapus user
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+
+    public function show($id)
+{
+    $user = User::find($id); // Mencari user berdasarkan ID
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404); // Jika user tidak ditemukan
+    }
+
+    return response()->json($user); // Mengembalikan data user dalam bentuk JSON
+}
+
 }
