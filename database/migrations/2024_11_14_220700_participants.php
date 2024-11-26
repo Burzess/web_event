@@ -29,14 +29,6 @@ return new class extends Migration
             $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('cascade');
             $table->timestamps();
         });
-        
-        Schema::create('participant_refresh_token', function (Blueprint $table) {
-            $table->id(); 
-            $table->string('token');
-            $table->string('refresh_token');
-            $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('cascade');
-            $table->timestamps();
-        });
  
     }
 

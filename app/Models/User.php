@@ -30,13 +30,15 @@ class User extends Authenticatable
     ];
 
     // Menyatakan hubungan dengan tabel roles
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role');
-    }
+  // Di model User.php
+public function role()
+{
+    return $this->belongsTo(Role::class, 'role');
+}
 
-    public function organizer()
-    {
-        return $this->belongsTo(Organizer::class, 'organizer');
-    }
+
+public function organizer()
+{
+    return $this->belongsTo(Organizer::class, 'organizer');
+}
 }

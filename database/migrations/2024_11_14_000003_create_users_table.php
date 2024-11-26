@@ -20,18 +20,8 @@ return new class extends Migration
             $table->rememberToken();
             $table->foreignId('role')->nullable()->constrained('roles')->onDelete('set null'); // Menggunakan foreignId untuk role
             $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null'); // Menggunakan foreignId untuk organizer
-            $table->string('refresh_token')->nullable();
             $table->timestamps();
         });
-
-        Schema::create('users_refresh_token', function (Blueprint $table) {
-            $table->id();
-            $table->string('token');
-            $table->string('refresh_token');
-            $table->foreignId('users')->constrained('users')->onDelete('cascade');
-            $table->timestamps();
-        });
-        
               
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

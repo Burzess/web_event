@@ -18,8 +18,8 @@
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->role->name ?? 'N/A' }}</td>
-                    <td>{{ $user->organizer->name ?? 'N/A' }}</td>
+                    <td>{{ ($user->role)->name ?? 'N/A' }}</td> <!-- Menggunakan optional untuk menghindari error jika relasi tidak ada -->
+                    <td>{{ ($user->organizer)->name ?? 'N/A' }}</td> <!-- Menggunakan optional untuk menghindari error jika relasi tidak ada -->
                     <td>
                         <a href="{{ route('users.edit', $user->id) }}">Edit</a>
                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
