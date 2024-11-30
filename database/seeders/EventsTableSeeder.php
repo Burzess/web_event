@@ -23,10 +23,10 @@ class EventsTableSeeder extends Seeder
                 'keypoint' => json_encode(['Networking', 'Workshops', 'Keynote Speakers']),
                 'venue_name' => 'Grand Tech Hall',
                 'status' => 'active',
-                'categories' => 1, // Sesuaikan dengan ID di tabel categories
-                'image' => 1, // Sesuaikan dengan ID di tabel images
-                'talent' => 1, // Sesuaikan dengan ID di tabel talents
-                'organizer' => 1, // Sesuaikan dengan ID di tabel organizers
+                'categories' => 1,
+                'image' => null,
+                'talent' => 1, 
+                'organizer' => 1, 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -39,7 +39,7 @@ class EventsTableSeeder extends Seeder
                 'venue_name' => 'Festival Ground',
                 'status' => 'active',
                 'categories' => 2,
-                'image' => 2,
+                'image' => null,
                 'talent' => 2,
                 'organizer' => 2,
                 'created_at' => now(),
@@ -54,7 +54,7 @@ class EventsTableSeeder extends Seeder
                 'venue_name' => 'Art Hub',
                 'status' => 'inactive',
                 'categories' => null, // Event tanpa kategori
-                'image' => 3,
+                'image' => null,
                 'talent' => null,
                 'organizer' => 3,
                 'created_at' => now(),

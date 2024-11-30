@@ -19,10 +19,9 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
-                'password' => Hash::make('password'), // Pastikan mengganti password dengan lebih aman
-                'role' => 1, // Sesuaikan dengan ID role di tabel roles
-                'organizer' => 1, // Sesuaikan dengan ID organizer di tabel organizers
-                'refresh_token' => null,
+                'password' => Hash::make('password'),
+                'role' => 1,
+                'organizer' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -32,7 +31,6 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 2,
                 'organizer' => 1,
-                'refresh_token' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

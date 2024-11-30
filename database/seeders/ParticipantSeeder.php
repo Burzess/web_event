@@ -56,23 +56,5 @@ class ParticipantSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
-
-        // Seed untuk tabel participant_refresh_token
-        DB::table('participant_refresh_token')->insert([
-            [
-                'token' => 'token123',
-                'refresh_token' => 'refresh123',
-                'participant' => 1, // ID peserta dari tabel participants
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'token' => 'token456',
-                'refresh_token' => 'refresh456',
-                'participant' => 2, // ID peserta dari tabel participants
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
     }
 }
