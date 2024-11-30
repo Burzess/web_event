@@ -10,6 +10,9 @@ use App\Http\Controllers\TalentController;
 use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return view('app');
+});
 // Halaman login untuk admin
 Route::get('/login', function () {
     return view('pages.auth.login');
