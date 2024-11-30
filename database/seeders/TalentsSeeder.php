@@ -18,7 +18,7 @@ class TalentsSeeder extends Seeder
             [
                 'name' => 'John Doe',
                 'organizer' => 1, // Sesuaikan dengan ID di tabel organizers
-                'image' => 1, // Sesuaikan dengan ID di tabel images
+                'image' => null, // Sesuaikan dengan ID di tabel images
                 'role' => 1, // Sesuaikan dengan ID di tabel roles
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -26,7 +26,7 @@ class TalentsSeeder extends Seeder
             [
                 'name' => 'Jane Smith',
                 'organizer' => 2,
-                'image' => 2,
+                'image' => null,
                 'role' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),

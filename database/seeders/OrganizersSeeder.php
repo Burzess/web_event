@@ -15,8 +15,9 @@ class OrganizersSeeder extends Seeder
     public function run()
     {
         DB::table('organizers')->insert([
-            ['name' => 'Organizer A', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Organizer B', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'HIMA', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'HMI', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'PMII', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

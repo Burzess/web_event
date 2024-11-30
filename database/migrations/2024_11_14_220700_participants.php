@@ -29,7 +29,6 @@ return new class extends Migration
             $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('cascade');
             $table->timestamps();
         });
- 
     }
 
     /**
@@ -38,7 +37,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('participant_forgot_password');
-        Schema::dropIfExists('participant_refresh_token');
         Schema::dropIfExists('participants');
     }
 };
