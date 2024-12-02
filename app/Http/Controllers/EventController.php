@@ -3,66 +3,92 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Category;
+use App\Models\Image;
+use App\Models\Talent;
+use App\Models\Organizer;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    // Menampilkan semua event
     public function index()
     {
         $events = Event::with(['category', 'image', 'talent', 'organizer'])->get();
-        return response()->json($events);
+        return view('events.index', compact('events'));
     }
 
-    // Menampilkan event berdasarkan ID
-    public function show($id)
+    public function show(Event $event)
     {
-        $event = Event::with(['category', 'image', 'talent', 'organizer'])->findOrFail($id);
-        return response()->json($event);
+        $event->load(['category', 'image', 'talent', 'organizer']);
+        return view('events.show', compact('event'));
     }
 
-    // Menyimpan event baru
+    public function create()
+    {
+        $categories = Category::all();
+        $images = Image::all();
+        $talents = Talent::all();
+        $organizers = Organizer::all();
+
+        return view('events.create', compact('categories', 'images', 'talents', 'organizers'));
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'date' => 'required|date',
             'about' => 'required|string',
+            'tagline' => 'nullable|string|max:255',
+            'keypoint' => 'nullable|array',
+            'venue_name' => 'required|string|max:255',
             'status' => 'required|in:active,inactive',
-            'categories' => 'nullable|exists:categories,id',
-            'image' => 'nullable|exists:images,id',
-            'talent' => 'nullable|exists:talents,id',
-            'organizer' => 'nullable|exists:organizers,id',
+            'categories_id' => 'nullable|exists:categories,id',
+            'image_id' => 'nullable|exists:images,id',
+            'talent_id' => 'nullable|exists:talents,id',
+            'organizer_id' => 'nullable|exists:organizers,id',
         ]);
 
-        $event = Event::create($request->all());
-        return response()->json($event, 201);
+        Event::create($validated);
+
+        return redirect()->route('events.index')->with('success', 'Event created successfully.');
     }
 
-    // Memperbarui event berdasarkan ID
-    public function update(Request $request, $id)
+    public function edit(Event $event)
     {
-        $request->validate([
-            'title' => 'required|string',
+        $categories = Category::all();
+        $images = Image::all();
+        $talents = Talent::all();
+        $organizers = Organizer::all();
+
+        return view('events.edit', compact('event', 'categories', 'images', 'talents', 'organizers'));
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'date' => 'required|date',
             'about' => 'required|string',
+            'tagline' => 'nullable|string|max:255',
+            'keypoint' => 'nullable|array',
+            'venue_name' => 'required|string|max:255',
             'status' => 'required|in:active,inactive',
-            'categories' => 'nullable|exists:categories,id',
-            'image' => 'nullable|exists:images,id',
-            'talent' => 'nullable|exists:talents,id',
-            'organizer' => 'nullable|exists:organizers,id',
+            'categories_id' => 'nullable|exists:categories,id',
+            'image_id' => 'nullable|exists:images,id',
+            'talent_id' => 'nullable|exists:talents,id',
+            'organizer_id' => 'nullable|exists:organizers,id',
         ]);
 
-        $event = Event::findOrFail($id);
-        $event->update($request->all());
-        return response()->json($event);
+        $event->update($validated);
+
+        return redirect()->route('events.index')->with('success', 'Event updated successfully.');
     }
 
-    // Menghapus event berdasarkan ID
-    public function destroy($id)
+    public function destroy(Event $event)
     {
-        $event = Event::findOrFail($id);
         $event->delete();
-        return response()->json(['message' => 'Event deleted successfully']);
+
+        return redirect()->route('events.index')->with('success', 'Event deleted successfully.');
     }
 }

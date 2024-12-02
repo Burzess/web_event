@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -11,50 +12,79 @@ class ImageController extends Controller
     public function index()
     {
         $images = Image::all();
-        return response()->json($images);
+        return view('images.index', compact('images'));
     }
 
-    // Menampilkan gambar berdasarkan ID
-    public function show($id)
+    // Menampilkan form untuk menambahkan gambar
+    public function create()
     {
-        $image = Image::findOrFail($id);
-        return response()->json($image);
+        return view('images.create');
     }
 
     // Menyimpan gambar baru
     public function store(Request $request)
     {
+        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:80000',
         ]);
-
-        $image = Image::create([
-            'name' => $request->name,
-        ]);
-
-        return response()->json($image, 201);
+    
+        // Periksa apakah file 'image' ada di request
+        if ($request->hasFile('image')) {
+            $filePath = $request->file('image')->store('uploads', 'public');
+    
+            // Simpan data ke database
+            Image::create([
+                'name' => $request->name,
+                'file_path' => $filePath,
+            ]);
+    
+            // Tambahkan pesan sukses
+            return redirect()->route('images.index')->with('success', 'Image has been successfully posted!');
+        } else {
+            return back()->withErrors(['image' => 'Image file is required.']);
+        }
+    }
+    
+    public function edit($id)
+    {
+        $image = Image::findOrFail($id);
+        return view('images.edit', compact('image'));
     }
 
-    // Memperbarui gambar berdasarkan ID
+    // Memperbarui gambar
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:80000',
         ]);
 
         $image = Image::findOrFail($id);
-        $image->update([
-            'name' => $request->name,
-        ]);
 
-        return response()->json($image);
+        if ($request->hasFile('image')) {
+            
+            Storage::disk('public')->delete($image->file_path);
+            $filePath = $request->file('image')->store('uploads', 'public');
+            $image->file_path = $filePath;
+        }
+
+        $image->name = $request->name;
+        $image->save();
+
+        return redirect()->route('images.index')->with('success', 'Image updated successfully.');
     }
 
-    // Menghapus gambar berdasarkan ID
     public function destroy($id)
     {
         $image = Image::findOrFail($id);
+
+        // Hapus file dari storage
+        Storage::disk('public')->delete($image->file_path);
+
         $image->delete();
-        return response()->json(['message' => 'Image deleted successfully']);
+
+        return redirect()->route('images.index')->with('success', 'Image deleted successfully.');
     }
 }

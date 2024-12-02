@@ -1,74 +1,83 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Organizer;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    /**
-     * Menampilkan daftar kategori.
-     */
-    public function index()
+    // Menampilkan semua kategori
+    public function index(): View
     {
-        $categories = Category::with('organizer')->get(); // Mengambil kategori beserta organizer-nya
-        return response()->json($categories);
+        $categories = Category::with('organizer')->get();
+        return view('categories.index', compact('categories'));
     }
 
-    /**
-     * Menyimpan kategori baru.
-     */
+    // Menampilkan form untuk membuat kategori baru
+    public function create(): View
+    {
+        $organizers = Organizer::all();
+        return view('categories.create', compact('organizers'));
+    }
+
+    // Menyimpan kategori baru
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'organizer_id' => 'nullable|exists:organizers,id',
+            'name' => 'required|string|max:255',
+            'organizer_id' => 'required|exists:organizers,id',
         ]);
 
-        $category = Category::create([
-            'name' => $request->name,
-            'organizer_id' => $request->organizer_id,
+        Category::create([
+            'name' => $request->input('name'),
+            'organizer_id' => $request->input('organizer_id'),
         ]);
 
-        return response()->json($category, 201);
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan kategori berdasarkan ID.
-     */
-    public function show($id)
+    // Menampilkan detail kategori berdasarkan ID
+    public function show($id): JsonResponse
     {
         $category = Category::with('organizer')->findOrFail($id);
         return response()->json($category);
     }
 
-    /**
-     * Mengupdate kategori.
-     */
+    // Menampilkan form untuk mengedit kategori
+    public function edit($id): View
+    {
+        $category = Category::findOrFail($id);
+        $organizers = Organizer::all();
+        return view('categories.edit', compact('category', 'organizers'));
+    }
+
+    // Mengupdate kategori
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string',
-            'organizer_id' => 'nullable|exists:organizers,id',
+            'name' => 'required|string|max:255',
+            'organizer_id' => 'required|exists:organizers,id',
         ]);
 
         $category = Category::findOrFail($id);
         $category->update([
-            'name' => $request->name,
-            'organizer_id' => $request->organizer_id,
+            'name' => $request->input('name'),
+            'organizer_id' => $request->input('organizer_id'),
         ]);
 
-        return response()->json($category);
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diubah.');
     }
 
-    /**
-     * Menghapus kategori.
-     */
+    // Menghapus kategori berdasarkan ID
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return response()->json(null, 204);
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }

@@ -1,33 +1,31 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Talent;
-use App\Models\Organizer; // Tambahkan import Organizer
+use App\Models\Organizer;
 use App\Models\Image;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class TalentController extends Controller
 {
-    // Menampilkan semua talent dalam tampilan web
     public function index()
     {
         $talents = Talent::with(['organizer', 'image', 'role'])->get();
         return view('talents.index', compact('talents'));
     }
 
-    // Menampilkan talent berdasarkan ID (untuk web)
-    public function show($id)
+    public function show($id): View
     {
         $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
         return view('talents.show', compact('talent'));
     }
-
-    // Menampilkan form untuk membuat talent baru
-    public function create()
+    public function create(): View
     {
-        // Ambil data yang diperlukan untuk form, seperti daftar organizer, image, dan role
-        $organizers = Organizer::all();  // Pastikan Organizer diimpor
+        $organizers = Organizer::all();
         $images = Image::all();
         $roles = Role::all();
 
@@ -37,63 +35,59 @@ class TalentController extends Controller
     // Menyimpan talent baru
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'organizer' => 'nullable|exists:organizers,id',
-            'image' => 'nullable|exists:images,id',
-            'role' => 'nullable|exists:roles,id',
+            'organizer_id' => 'nullable|exists:organizers,id',
+            'image_id' => 'nullable|exists:images,id',
+            'role_id' => 'nullable|exists:roles,id',
         ]);
 
-        // Membuat talent baru dengan input dari form
-        $talent = Talent::create([
+        Talent::create([
             'name' => $request->input('name'),
-            'organizer' => $request->input('organizer'),
-            'image' => $request->input('image'),
-            'role' => $request->input('role'),
+            'organizer_id' => $request->input('organizer_id'),
+            'image_id' => $request->input('image_id'),
+            'role_id' => $request->input('role_id'),
         ]);
 
-        // Redirect setelah berhasil membuat talent
-        return redirect()->route('talents.index')->with('success', 'Talent created successfully!');
+        return redirect()->route('talents.index')->with('success', 'Talent berhasil ditambahkan.');
     }
 
-    // Menampilkan form untuk mengedit talent
-    public function edit($id)
+    public function edit($id): View
     {
-        // Ambil data talent beserta relasinya
         $talent = Talent::findOrFail($id);
-        $organizers = Organizer::all();  // Pastikan Organizer diimpor
+        $organizers = Organizer::all();
         $images = Image::all();
         $roles = Role::all();
 
         return view('talents.edit', compact('talent', 'organizers', 'images', 'roles'));
     }
 
-    // Memperbarui talent berdasarkan ID
-    public function update(Request $request, $id)
+    // Mengupdate data talent
+    public function update(Request $request, $id): RedirectResponse
     {
-        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'organizer' => 'nullable|exists:organizers,id',
-            'image' => 'nullable|exists:images,id',
-            'role' => 'nullable|exists:roles,id',
+            'organizer_id' => 'nullable|exists:organizers,id',
+            'image_id' => 'nullable|exists:images,id',
+            'role_id' => 'nullable|exists:roles,id',
         ]);
 
         $talent = Talent::findOrFail($id);
-        $talent->update($request->only('name', 'organizer', 'image', 'role'));
+        $talent->update([
+            'name' => $request->input('name'),
+            'organizer_id' => $request->input('organizer_id'),
+            'image_id' => $request->input('image_id'),
+            'role_id' => $request->input('role_id'),
+        ]);
 
-        // Redirect setelah berhasil mengupdate talent
-        return redirect()->route('talents.index')->with('success', 'Talent updated successfully!');
+        return redirect()->route('talents.index')->with('success', 'Talent berhasil diperbarui.');
     }
 
-    // Menghapus talent berdasarkan ID
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $talent = Talent::findOrFail($id);
         $talent->delete();
 
-        // Redirect setelah berhasil menghapus talent
-        return redirect()->route('talents.index')->with('success', 'Talent deleted successfully!');
+        return redirect()->route('talents.index')->with('success', 'Talent deleted successfully.');
     }
 }
