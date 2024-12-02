@@ -8,11 +8,11 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'organizer_id'];  // Kolom yang bisa diisi
+    protected $fillable = ['name', 'organizer_id']; 
 
     // Relasi dengan Organizer
     public function organizer()
     {
-        return $this->belongsTo(Organizer::class, 'organizer_id');  // Relasi satu ke banyak
+        return $this->belongsTo(Organizer::class); 
     }
 }

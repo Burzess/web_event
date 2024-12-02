@@ -9,5 +9,12 @@ class Image extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'file_path', // Path file gambar
+    ];
+    public function talents()
+    {
+        return $this->hasMany(Talent::class, 'image');
+    }
 }
