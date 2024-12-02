@@ -14,7 +14,7 @@ return new class extends Migration
             $table->id(); 
             $table->json('history_ticket_categories');
             $table->integer('sum_ticket');
-            $table->foreignId('order')->nullable()->constrained('orders')->onDelete('cascade'); // Menggunakan foreignId
+            $table->foreignId('order_id')->nullable()->constrained('orders')->onDelete('cascade'); // Menggunakan foreignId
             $table->timestamps();
         });        
     }
