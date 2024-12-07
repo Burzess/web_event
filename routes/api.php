@@ -36,11 +36,13 @@ Route::put('images/{id}', [ImageController::class, 'update'])->name('images.upda
 Route::delete('images/{id}', [ImageController::class, 'destroy'])->name('images.destroy');
 
 // Rute Talent
-Route::post('talents', [TalentController::class, 'store'])->name('talents.store');
-Route::get('talents', [TalentController::class, 'index'])->name('talents.index');
-Route::get('talents/{id}', [TalentController::class, 'show'])->name('talents.show');
-Route::put('talents/{id}', [TalentController::class, 'update'])->name('talents.update');
-Route::delete('talents/{id}', [TalentController::class, 'destroy'])->name('talents.destroy');
+Route::prefix('talents')->group(function () {
+    Route::get('/', [TalentController::class, 'index']); // GET all talents
+    Route::get('{id}', [TalentController::class, 'show']); // GET a single talent
+    Route::post('/', [TalentController::class, 'store']); // POST new talent
+    Route::put('{id}', [TalentController::class, 'update']); // PUT update talent
+    Route::delete('{id}', [TalentController::class, 'destroy']); // DELETE talent
+});
 
 // Rute Event
 Route::prefix('events')->group(function () {
