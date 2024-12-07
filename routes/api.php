@@ -8,6 +8,7 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TalentController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\TicketCategoryController;
 use Illuminate\Http\Request;
 
 // Rute login
@@ -28,22 +29,40 @@ Route::resource('organizers', OrganizerController::class);
 Route::resource('categories', CategoryController::class);
 
 // Rute Images
-Route::get('images', [ImageController::class, 'index'])->name('images.index');
-Route::get('images/{id}', [ImageController::class, 'show'])->name('images.show');
-Route::post('images', [ImageController::class, 'store'])->name('images.store');
-Route::put('images/{id}', [ImageController::class, 'update'])->name('images.update');
-Route::delete('images/{id}', [ImageController::class, 'destroy'])->name('images.destroy');
+// Rute untuk Images
+Route::prefix('images')->group(function () {
+    Route::get('/', [ImageController::class, 'index'])->name('images.index'); // GET all images
+    Route::get('{id}', [ImageController::class, 'show'])->name('images.show'); // GET a single image
+    Route::post('/', [ImageController::class, 'store'])->name('images.store'); // POST new image
+    Route::put('{id}', [ImageController::class, 'update'])->name('images.update'); // PUT update image
+    Route::delete('{id}', [ImageController::class, 'destroy'])->name('images.destroy'); // DELETE image
+});
+
 
 // Rute Talent
-Route::post('talents', [TalentController::class, 'store'])->name('talents.store');
-Route::get('talents', [TalentController::class, 'index'])->name('talents.index');
-Route::get('talents/{id}', [TalentController::class, 'show'])->name('talents.show');
-Route::put('talents/{id}', [TalentController::class, 'update'])->name('talents.update');
-Route::delete('talents/{id}', [TalentController::class, 'destroy'])->name('talents.destroy');
+Route::prefix('talents')->group(function () {
+    Route::get('/', [TalentController::class, 'index']); // GET all talents
+    Route::get('{id}', [TalentController::class, 'show']); // GET a single talent
+    Route::post('/', [TalentController::class, 'store']); // POST new talent
+    Route::put('{id}', [TalentController::class, 'update']); // PUT update talent
+    Route::delete('{id}', [TalentController::class, 'destroy']); // DELETE talent
+});
 
 // Rute Event
-Route::get('events', [EventController::class, 'index'])->name('events.index');
-Route::get('events/{id}', [EventController::class, 'show'])->name('events.show');
-Route::post('events', [EventController::class, 'store'])->name('events.store');
-Route::put('events/{id}', [EventController::class, 'update'])->name('events.update');
-Route::delete('events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+Route::prefix('events')->group(function () {
+    Route::get('/', [EventController::class, 'index']); // Get all events
+    Route::post('/', [EventController::class, 'store']); // Create a new event
+    Route::get('{id}', [EventController::class, 'show']); // Get a specific event
+    Route::put('{id}', [EventController::class, 'update']); // Update a specific event
+    Route::delete('{id}', [EventController::class, 'destroy']); // Delete a specific event
+});
+
+
+Route::prefix('ticket-categories')->group(function () {
+    Route::get('/', [TicketCategoryController::class, 'index']);
+    Route::post('/', [TicketCategoryController::class, 'store']);
+    Route::get('/{id}', [TicketCategoryController::class, 'show']);
+    Route::put('/{id}', [TicketCategoryController::class, 'update']);
+    Route::delete('/{id}', [TicketCategoryController::class, 'destroy']);
+});
+

@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('ticket_categories', function (Blueprint $table) {
@@ -17,14 +14,10 @@ return new class extends Migration
             $table->integer('stock');
             $table->integer('sum_ticket');
             $table->enum('status', ['available', 'sold out']);
-            $table->foreignId('event')->nullable()->constrained('events')->onDelete('cascade');
+            $table->foreignId('event_id')->nullable()->constrained('events')->onDelete('cascade');
             $table->timestamps();
         });           
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('ticket_categories');

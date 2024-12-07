@@ -1,74 +1,144 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Organizer;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    /**
-     * Menampilkan daftar kategori.
-     */
-    public function index()
+    // Menampilkan semua kategori
+    public function index(Request $request): JsonResponse
     {
-        $categories = Category::with('organizer')->get(); // Mengambil kategori beserta organizer-nya
-        return response()->json($categories);
+        try {
+            $categories = Category::with('organizer')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $categories,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Menyimpan kategori baru.
-     */
-    public function store(Request $request)
+    // Menyimpan kategori baru
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string',
-            'organizer_id' => 'nullable|exists:organizers,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name',
+                'organizer_id' => 'required|exists:organizers,id',
+            ], [
+                'name.required' => 'Nama kategori harus diisi.',
+                'name.unique' => 'Nama kategori sudah digunakan.',
+                'organizer_id.required' => 'Organizer harus dipilih.',
+                'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+            ]);
 
-        $category = Category::create([
-            'name' => $request->name,
-            'organizer_id' => $request->organizer_id,
-        ]);
+            $category = Category::create([
+                'name' => $request->input('name'),
+                'organizer_id' => $request->input('organizer_id'),
+            ]);
 
-        return response()->json($category, 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil ditambahkan.',
+                'data' => $category,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Menampilkan kategori berdasarkan ID.
-     */
-    public function show($id)
+    // Menampilkan detail kategori berdasarkan ID
+    // public function show(Request $request, $id): JsonResponse
+    // {
+    //     try {
+    //         $category = Category::with('organizer')->findOrFail($id);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $category,
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Kategori tidak ditemukan: ' . $e->getMessage(),
+    //         ], 404);
+    //     }
+    // }
+
+    public function show($id): JsonResponse
     {
-        $category = Category::with('organizer')->findOrFail($id);
-        return response()->json($category);
+        try {
+            $category = Category::with('organizer')->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $category], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Kategori not found: ' . $e->getMessage()], 404);
+        }
     }
 
-    /**
-     * Mengupdate kategori.
-     */
-    public function update(Request $request, $id)
+    // Mengupdate kategori
+    public function update(Request $request, $id): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string',
-            'organizer_id' => 'nullable|exists:organizers,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name,' . $id,
+                'organizer_id' => 'required|exists:organizers,id',
+            ], [
+                'name.required' => 'Nama kategori harus diisi.',
+                'name.unique' => 'Nama kategori sudah digunakan.',
+                'organizer_id.required' => 'Organizer harus dipilih.',
+                'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+            ]);
 
-        $category = Category::findOrFail($id);
-        $category->update([
-            'name' => $request->name,
-            'organizer_id' => $request->organizer_id,
-        ]);
+            $category = Category::findOrFail($id);
+            $category->update([
+                'name' => $request->input('name'),
+                'organizer_id' => $request->input('organizer_id'),
+            ]);
 
-        return response()->json($category);
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil diubah.',
+                'data' => $category,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Menghapus kategori.
-     */
-    public function destroy($id)
-    {
-        $category = Category::findOrFail($id);
-        $category->delete();
 
-        return response()->json(null, 204);
+
+
+    // Menghapus kategori berdasarkan ID
+    public function destroy(Request $request, $id): JsonResponse
+    {
+        try {
+            $category = Category::findOrFail($id);
+            $category->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil dihapus.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

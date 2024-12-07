@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('status');
             $table->integer('total_pay');
             $table->integer('total_order_ticket');
-            $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('set null');
-            $table->foreignId('event')->nullable()->constrained('events')->onDelete('set null');
+            $table->foreignId('participant_id')->nullable()->constrained('participants')->onDelete('set null');
+            $table->foreignId('event_id')->nullable()->constrained('events')->onDelete('set null');
             $table->json('personalDetail')->nullable();
             $table->timestamps();
         });             

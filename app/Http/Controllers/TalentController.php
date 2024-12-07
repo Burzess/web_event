@@ -2,98 +2,160 @@
 namespace App\Http\Controllers;
 
 use App\Models\Talent;
-use App\Models\Organizer; // Tambahkan import Organizer
+use App\Models\Organizer;
 use App\Models\Image;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class TalentController extends Controller
 {
-    // Menampilkan semua talent dalam tampilan web
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $talents = Talent::with(['organizer', 'image', 'role'])->get();
-        return view('talents.index', compact('talents'));
+        try {
+            $talents = Talent::with(['organizer', 'image', 'role'])->get();
+            return response()->json(['success' => true, 'data' => $talents], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data talent: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // Menampilkan talent berdasarkan ID (untuk web)
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
-        return view('talents.show', compact('talent'));
+        try {
+            $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $talent], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data talent: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // Menampilkan form untuk membuat talent baru
-    public function create()
-    {
-        // Ambil data yang diperlukan untuk form, seperti daftar organizer, image, dan role
-        $organizers = Organizer::all();  // Pastikan Organizer diimpor
-        $images = Image::all();
-        $roles = Role::all();
+    // public function show(Request $request, $id): JsonResponse
+    // {
+    //     try {
+    //         $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
+    //         return response()->json(['success' => true, 'data' => $talent], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Gagal mengambil data talent: ' . $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 
-        return view('talents.create', compact('organizers', 'images', 'roles'));
+    public function store(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:talents,name',
+                'organizer_id' => 'nullable|exists:organizers,id',
+                'image_id' => 'nullable|exists:images,id',
+                'role_id' => 'nullable|exists:roles,id',
+            ], [
+                'name.required' => 'Nama talent harus diisi.',
+                'name.unique' => 'Nama talent sudah digunakan.',
+                'organizer_id.exists' => 'Organizer tidak ditemukan.',
+                'image_id.exists' => 'Gambar tidak ditemukan.',
+                'role_id.exists' => 'Role tidak ditemukan.',
+            ]);
+
+            $talent = Talent::create([
+                'name' => $request->input('name'),
+                'organizer_id' => $request->input('organizer_id'),
+                'image_id' => $request->input('image_id'),
+                'role_id' => $request->input('role_id'),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Talent berhasil ditambahkan.',
+                'data' => $talent,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan talent: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // Menyimpan talent baru
-    public function store(Request $request)
+//     public function edit(Request $request, $id): JsonResponse
+// {
+//     try {
+//         // Mencari talent berdasarkan ID
+//         $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
+
+//         // Mengembalikan data talent dalam format JSON
+//         return response()->json([
+//             'success' => true,
+//             'data' => $talent
+//         ], 200);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Gagal memuat data talent: ' . $e->getMessage(),
+//         ], 500);
+//     }
+// }
+
+    public function update(Request $request, $id): JsonResponse
     {
-        // Validasi input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'organizer' => 'nullable|exists:organizers,id',
-            'image' => 'nullable|exists:images,id',
-            'role' => 'nullable|exists:roles,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:talents,name,' . $id,
+                'organizer_id' => 'nullable|exists:organizers,id',
+                'image_id' => 'nullable|exists:images,id',
+                'role_id' => 'nullable|exists:roles,id',
+            ], [
+                'name.required' => 'Nama talent harus diisi.',
+                'name.unique' => 'Nama talent sudah digunakan.',
+                'organizer_id.exists' => 'Organizer tidak ditemukan.',
+                'image_id.exists' => 'Gambar tidak ditemukan.',
+                'role_id.exists' => 'Role tidak ditemukan.',
+            ]);
 
-        // Membuat talent baru dengan input dari form
-        $talent = Talent::create([
-            'name' => $request->input('name'),
-            'organizer' => $request->input('organizer'),
-            'image' => $request->input('image'),
-            'role' => $request->input('role'),
-        ]);
+            $talent = Talent::findOrFail($id);
+            $talent->update([
+                'name' => $request->input('name'),
+                'organizer_id' => $request->input('organizer_id'),
+                'image_id' => $request->input('image_id'),
+                'role_id' => $request->input('role_id'),
+            ]);
 
-        // Redirect setelah berhasil membuat talent
-        return redirect()->route('talents.index')->with('success', 'Talent created successfully!');
+            return response()->json([
+                'success' => true,
+                'message' => 'Talent berhasil diperbarui.',
+                'data' => $talent,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui talent: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // Menampilkan form untuk mengedit talent
-    public function edit($id)
+    public function destroy(Request $request, $id): JsonResponse
     {
-        // Ambil data talent beserta relasinya
-        $talent = Talent::findOrFail($id);
-        $organizers = Organizer::all();  // Pastikan Organizer diimpor
-        $images = Image::all();
-        $roles = Role::all();
+        try {
+            $talent = Talent::findOrFail($id);
+            $talent->delete();
 
-        return view('talents.edit', compact('talent', 'organizers', 'images', 'roles'));
-    }
-
-    // Memperbarui talent berdasarkan ID
-    public function update(Request $request, $id)
-    {
-        // Validasi input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'organizer' => 'nullable|exists:organizers,id',
-            'image' => 'nullable|exists:images,id',
-            'role' => 'nullable|exists:roles,id',
-        ]);
-
-        $talent = Talent::findOrFail($id);
-        $talent->update($request->only('name', 'organizer', 'image', 'role'));
-
-        // Redirect setelah berhasil mengupdate talent
-        return redirect()->route('talents.index')->with('success', 'Talent updated successfully!');
-    }
-
-    // Menghapus talent berdasarkan ID
-    public function destroy($id)
-    {
-        $talent = Talent::findOrFail($id);
-        $talent->delete();
-
-        // Redirect setelah berhasil menghapus talent
-        return redirect()->route('talents.index')->with('success', 'Talent deleted successfully!');
+            return response()->json([
+                'success' => true,
+                'message' => 'Talent berhasil dihapus.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus talent: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
