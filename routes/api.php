@@ -29,11 +29,15 @@ Route::resource('organizers', OrganizerController::class);
 Route::resource('categories', CategoryController::class);
 
 // Rute Images
-Route::get('images', [ImageController::class, 'index'])->name('images.index');
-Route::get('images/{id}', [ImageController::class, 'show'])->name('images.show');
-Route::post('images', [ImageController::class, 'store'])->name('images.store');
-Route::put('images/{id}', [ImageController::class, 'update'])->name('images.update');
-Route::delete('images/{id}', [ImageController::class, 'destroy'])->name('images.destroy');
+// Rute untuk Images
+Route::prefix('images')->group(function () {
+    Route::get('/', [ImageController::class, 'index'])->name('images.index'); // GET all images
+    Route::get('{id}', [ImageController::class, 'show'])->name('images.show'); // GET a single image
+    Route::post('/', [ImageController::class, 'store'])->name('images.store'); // POST new image
+    Route::put('{id}', [ImageController::class, 'update'])->name('images.update'); // PUT update image
+    Route::delete('{id}', [ImageController::class, 'destroy'])->name('images.destroy'); // DELETE image
+});
+
 
 // Rute Talent
 Route::prefix('talents')->group(function () {
