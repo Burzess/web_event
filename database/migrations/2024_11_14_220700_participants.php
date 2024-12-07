@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::create('participants', function (Blueprint $table) {
@@ -21,22 +19,19 @@ return new class extends Migration
             $table->timestamps();
         });
         
-        Schema::create('participant_forgot_password', function (Blueprint $table) {
+        Schema::create('participant_forgot_passwords', function (Blueprint $table) {
             $table->id(); 
             $table->string('code');
             $table->string('status');
             $table->string('active_code')->nullable();
-            $table->foreignId('participant')->nullable()->constrained('participants')->onDelete('cascade');
+            $table->foreignId('participant_id')->nullable()->constrained('participants')->onDelete('cascade');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('participant_forgot_password');
+        Schema::dropIfExists('participant_forgot_passwords');
         Schema::dropIfExists('participants');
     }
 };

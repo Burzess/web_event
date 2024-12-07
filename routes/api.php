@@ -8,6 +8,7 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TalentController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\TicketCategoryController;
 use Illuminate\Http\Request;
 
 // Rute login
@@ -42,8 +43,20 @@ Route::put('talents/{id}', [TalentController::class, 'update'])->name('talents.u
 Route::delete('talents/{id}', [TalentController::class, 'destroy'])->name('talents.destroy');
 
 // Rute Event
-Route::get('events', [EventController::class, 'index'])->name('events.index');
-Route::get('events/{id}', [EventController::class, 'show'])->name('events.show');
-Route::post('events', [EventController::class, 'store'])->name('events.store');
-Route::put('events/{id}', [EventController::class, 'update'])->name('events.update');
-Route::delete('events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+Route::prefix('events')->group(function () {
+    Route::get('/', [EventController::class, 'index']); // Get all events
+    Route::post('/', [EventController::class, 'store']); // Create a new event
+    Route::get('{id}', [EventController::class, 'show']); // Get a specific event
+    Route::put('{id}', [EventController::class, 'update']); // Update a specific event
+    Route::delete('{id}', [EventController::class, 'destroy']); // Delete a specific event
+});
+
+
+Route::prefix('ticket-categories')->group(function () {
+    Route::get('/', [TicketCategoryController::class, 'index']);
+    Route::post('/', [TicketCategoryController::class, 'store']);
+    Route::get('/{id}', [TicketCategoryController::class, 'show']);
+    Route::put('/{id}', [TicketCategoryController::class, 'update']);
+    Route::delete('/{id}', [TicketCategoryController::class, 'destroy']);
+});
+

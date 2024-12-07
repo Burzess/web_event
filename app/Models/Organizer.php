@@ -13,6 +13,17 @@ class Organizer extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'organizer');
+        //satuorganizer memiliki banyak user
+        return $this->hasMany(User::class);
     }
+    public function talents()
+    {
+        return $this->hasMany(Talent::class);
+    }
+    public function category()
+    {
+        //satu organizer memiliki banyak kategori
+        return $this->hasMany(Category::class);
+    }
+
 }

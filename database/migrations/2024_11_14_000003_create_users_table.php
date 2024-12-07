@@ -18,9 +18,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->foreignId('role')->nullable()->constrained('roles')->onDelete('set null'); // Menggunakan foreignId untuk role
-            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null'); // Menggunakan foreignId untuk organizer
-            $table->timestamps();
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null');
+            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
+              $table->timestamps();
         });
               
 
@@ -47,7 +47,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
-        Schema::dropIfExists('users_refresh_token');
         Schema::dropIfExists('users');
     }
 };

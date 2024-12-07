@@ -3,66 +3,127 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Category;
+use App\Models\Image;
+use App\Models\Talent;
+use App\Models\Organizer;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class EventController extends Controller
 {
-    // Menampilkan semua event
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $events = Event::with(['category', 'image', 'talent', 'organizer'])->get();
-        return response()->json($events);
+        try {
+            $events = Event::with(['category', 'image', 'talent', 'organizer'])->get();
+            return response()->json(['success' => true, 'data' => $events], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil acara.'], 500);
+        }
     }
 
-    // Menampilkan event berdasarkan ID
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        $event = Event::with(['category', 'image', 'talent', 'organizer'])->findOrFail($id);
-        return response()->json($event);
+        try {
+            $event = Event::with(['category', 'image', 'talent', 'organizer'])->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $event], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil detail acara.'], 500);
+        }
     }
 
-    // Menyimpan event baru
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'title' => 'required|string',
-            'date' => 'required|date',
-            'about' => 'required|string',
-            'status' => 'required|in:active,inactive',
-            'categories' => 'nullable|exists:categories,id',
-            'image' => 'nullable|exists:images,id',
-            'talent' => 'nullable|exists:talents,id',
-            'organizer' => 'nullable|exists:organizers,id',
-        ]);
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255|unique:events,title',
+                'date' => 'required|date',
+                'about' => 'required|string',
+                'tagline' => 'nullable|string|max:255',
+                'keypoint' => 'nullable|array',
+                'venue_name' => 'required|string|max:255',
+                'status' => 'required|in:active,inactive',
+                'categories_id' => 'nullable|exists:categories,id',
+                'image_id' => 'nullable|exists:images,id',
+                'talent_id' => 'nullable|exists:talents,id',
+                'organizer_id' => 'nullable|exists:organizers,id',
+            ], [
+                'title.required' => 'Judul acara harus diisi.',
+                'title.unique' => 'Judul acara sudah digunakan.',
+                'date.required' => 'Tanggal acara harus diisi.',
+                'about.required' => 'Deskripsi acara harus diisi.',
+                'venue_name.required' => 'Nama venue harus diisi.',
+                'status.required' => 'Status acara harus dipilih.',
+                'categories_id.exists' => 'Kategori tidak ditemukan.',
+                'image_id.exists' => 'Gambar tidak ditemukan.',
+                'talent_id.exists' => 'Talent tidak ditemukan.',
+                'organizer_id.exists' => 'Organizer tidak ditemukan.',
+            ]);
 
-        $event = Event::create($request->all());
-        return response()->json($event, 201);
+            $event = Event::create($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Acara berhasil dibuat.',
+                'data' => $event,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal membuat acara. ' . $e->getMessage()], 500);
+        }
     }
 
-    // Memperbarui event berdasarkan ID
-    public function update(Request $request, $id)
+    public function update(Request $request, Event $event): JsonResponse
     {
-        $request->validate([
-            'title' => 'required|string',
-            'date' => 'required|date',
-            'about' => 'required|string',
-            'status' => 'required|in:active,inactive',
-            'categories' => 'nullable|exists:categories,id',
-            'image' => 'nullable|exists:images,id',
-            'talent' => 'nullable|exists:talents,id',
-            'organizer' => 'nullable|exists:organizers,id',
-        ]);
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255|unique:events,title,' . $event->id,
+                'date' => 'required|date',
+                'about' => 'required|string',
+                'tagline' => 'nullable|string|max:255',
+                'keypoint' => 'nullable|array',
+                'venue_name' => 'required|string|max:255',
+                'status' => 'required|in:active,inactive',
+                'categories_id' => 'nullable|exists:categories,id',
+                'image_id' => 'nullable|exists:images,id',
+                'talent_id' => 'nullable|exists:talents,id',
+                'organizer_id' => 'nullable|exists:organizers,id',
+            ], [
+                'title.required' => 'Judul acara harus diisi.',
+                'title.unique' => 'Judul acara sudah digunakan.',
+                'date.required' => 'Tanggal acara harus diisi.',
+                'about.required' => 'Deskripsi acara harus diisi.',
+                'venue_name.required' => 'Nama venue harus diisi.',
+                'status.required' => 'Status acara harus dipilih.',
+                'categories_id.exists' => 'Kategori tidak ditemukan.',
+                'image_id.exists' => 'Gambar tidak ditemukan.',
+                'talent_id.exists' => 'Talent tidak ditemukan.',
+                'organizer_id.exists' => 'Organizer tidak ditemukan.',
+            ]);
 
-        $event = Event::findOrFail($id);
-        $event->update($request->all());
-        return response()->json($event);
+            $event->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Acara berhasil diperbarui.',
+                'data' => $event,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal memperbarui acara. ' . $e->getMessage()], 500);
+        }
     }
 
-    // Menghapus event berdasarkan ID
-    public function destroy($id)
+    public function destroy(Request $request, Event $event): JsonResponse
     {
-        $event = Event::findOrFail($id);
-        $event->delete();
-        return response()->json(['message' => 'Event deleted successfully']);
+        try {
+            $event = Event::findOrFail($event->id);
+            $event->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Acara berhasil dihapus.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus acara. ' . $e->getMessage()], 500);
+        }
     }
 }

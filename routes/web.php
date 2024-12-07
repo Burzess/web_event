@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TicketCategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RoleController;
@@ -28,35 +29,39 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // CRUD Roles
-    Route::resource('roles', RoleController::class);
-
-    // CRUD Organizers
-    Route::resource('organizers', OrganizerController::class);
 });
+// CRUD Roles
+Route::resource('roles', RoleController::class);
+
+// CRUD Organizers
+Route::resource('organizers', OrganizerController::class);
 
 // Rute untuk Category
-Route::prefix('categories')->group(function () {
-    Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/{id}', [CategoryController::class, 'show'])->name('categories.show');
-});
+Route::resource('categories', CategoryController::class);
 
 // Rute untuk Users
 Route::resource('users', UserController::class);
 
 // Rute untuk Images
-Route::prefix('images')->group(function () {
-    Route::get('/', [ImageController::class, 'index'])->name('images.index');
-    Route::get('/{id}', [ImageController::class, 'show'])->name('images.show');
+Route::resource('images', ImageController::class);
+Route::middleware('web')->group(function () {
+    Route::resource('images', ImageController::class);
 });
 
-// Rute untuk Talents
-Route::post('talents', [TalentController::class, 'store'])->name('talents.store');
+// Route tambahan jika ingin membuat route spesifik
 Route::resource('talents', TalentController::class);
-Route::post('talents', [TalentController::class, 'store']);
 
 // Rute untuk Events
-Route::prefix('events')->group(function () {
-    Route::get('/', [EventController::class, 'index'])->name('events.index');
-    Route::get('/{id}', [EventController::class, 'show'])->name('events.show');
+Route::resource('events', EventController::class);
+
+//tiket categories
+
+Route::prefix('ticket-categories')->group(function () {
+    Route::get('/', [TicketCategoryController::class, 'index'])->name('ticket_categories.index'); // Halaman utama daftar ticket categories
+    Route::get('/create', [TicketCategoryController::class, 'create'])->name('ticket_categories.create'); // Halaman untuk tambah data
+    Route::post('/', [TicketCategoryController::class, 'store'])->name('ticket_categories.store'); // Proses simpan data baru
+    Route::get('/{id}/edit', [TicketCategoryController::class, 'edit'])->name('ticket_categories.edit'); // Halaman edit
+    Route::put('/{id}', [TicketCategoryController::class, 'update'])->name('ticket_categories.update'); // Proses update
+    Route::delete('/{id}', [TicketCategoryController::class, 'destroy'])->name('ticket_categories.destroy'); // Proses hapus data
 });
+

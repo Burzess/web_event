@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id(); // Tipe data BIGINT
             $table->string('name');
-            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null'); // Menggunakan foreignId untuk tipe data yang sesuai
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null'); // Menggunakan foreignId untuk tipe data yang sesuai
             $table->timestamps();
         });        
     }
