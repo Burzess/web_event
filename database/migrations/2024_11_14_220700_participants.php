@@ -27,7 +27,6 @@ return new class extends Migration
             $table->foreignId('participant_id')->nullable()->constrained('participants')->onDelete('cascade');
             $table->timestamps();
         });
- 
     }
 
     public function down(): void
