@@ -20,17 +20,14 @@ return new class extends Migration
             $table->json('keypoint')->nullable();
             $table->string('venue_name');
             $table->enum('status', ['active', 'inactive']);
-            $table->foreignId('categories')->nullable()->constrained('categories')->onDelete('set null');
-            $table->foreignId('image')->nullable()->constrained('images')->onDelete('set null');
-            $table->foreignId('talent')->nullable()->constrained('talents')->onDelete('set null');
-            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null');
+            $table->foreignId('categories_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('image_id')->nullable()->constrained('images')->onDelete('set null');
+            $table->foreignId('talent_id')->nullable()->constrained('talents')->onDelete('set null');
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null');
             $table->timestamps();
         });             
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('events');

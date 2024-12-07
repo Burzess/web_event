@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
         'name', 
         'email', 
         'password', 
-        'role', 
-        'organizer', 
+        'role_id', 
+        'organizer_id', 
         'refresh_token'
     ];
 
@@ -33,12 +34,12 @@ class User extends Authenticatable
   // Di model User.php
 public function role()
 {
-    return $this->belongsTo(Role::class, 'role');
+    return $this->belongsTo(Role::class);
 }
 
 
 public function organizer()
 {
-    return $this->belongsTo(Organizer::class, 'organizer');
+    return $this->belongsTo(Organizer::class);
 }
 }

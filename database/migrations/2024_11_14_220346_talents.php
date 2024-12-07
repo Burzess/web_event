@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('talents', function (Blueprint $table) {
             $table->id(); 
             $table->string('name');
-            $table->foreignId('organizer')->nullable()->constrained('organizers')->onDelete('set null');
-            $table->foreignId('image')->nullable()->constrained('images')->onDelete('set null');
-            $table->foreignId('role')->nullable()->constrained('roles')->onDelete('set null');
-            $table->timestamps();
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null');
+            $table->foreignId('image_id')->nullable()->constrained('images')->onDelete('set null');
+            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
+             $table->timestamps();
         });        
     }
 
