@@ -5,81 +5,130 @@ namespace App\Http\Controllers;
 use App\Models\TicketCategory;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TicketCategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $ticketCategories = TicketCategory::with('event')->get();
+        try {
+            $ticketCategories = TicketCategory::with('event')->get();
 
-        if (request()->wantsJson()) {
-            return response()->json($ticketCategories);
+            return response()->json([
+                'success' => true,
+                'data' => $ticketCategories,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching ticket categories.',
+            ], 500);
         }
-
-        return view('ticket_categories.index', compact('ticketCategories'));
     }
 
-    public function create()
+    public function store(Request $request): JsonResponse
     {
-        $events = Event::all();
-        return view('ticket_categories.create', compact('events'));
-    }
+        try {
+            $validated = $request->validate([
+                'price' => 'required|integer|min:0|unique:ticket_categories,price',
+                'stock' => 'required|integer|min:0',
+                'sum_ticket' => 'required|integer|min:0',
+                'status' => 'required|in:available,sold out',
+                'event_id' => 'nullable|exists:events,id',
+            ]);
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'price' => 'required|integer|min:0',
-            'stock' => 'required|integer|min:0',
-            'sum_ticket' => 'required|integer|min:0',
-            'status' => 'required|in:available,sold out',
-            'event_id' => 'nullable|exists:events,id',
-        ]);
+            $ticketCategory = TicketCategory::create($validated);
 
-        TicketCategory::create($validated);
-
-        return redirect()->route('ticket_categories.index')->with('success', 'Ticket category created successfully.');
-    }
-
-    public function show($id)
-    {
-        $ticketCategory = TicketCategory::with('event')->findOrFail($id);
-
-        if (request()->wantsJson()) {
-            return response()->json($ticketCategory);
+            return response()->json([
+                'success' => true,
+                'message' => 'Ticket category created successfully.',
+                'data' => $ticketCategory,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while creating the ticket category.',
+            ], 500);
         }
-
-        return view('ticket_categories.show', compact('ticketCategory'));
     }
 
-    public function edit($id)
+    public function show($id): JsonResponse
     {
-        $ticketCategory = TicketCategory::findOrFail($id);
-        $events = Event::all();
+        try {
+            $ticketCategory = TicketCategory::with('event')->findOrFail($id);
 
-        return view('ticket_categories.edit', compact('ticketCategory', 'events'));
+            return response()->json([
+                'success' => true,
+                'data' => $ticketCategory,
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket category not found.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching the ticket category.',
+            ], 500);
+        }
     }
 
-    public function update(Request $request, $id)
+
+    public function update(Request $request, $id): JsonResponse
     {
-        $validated = $request->validate([
-            'price' => 'required|integer|min:0',
-            'stock' => 'required|integer|min:0',
-            'sum_ticket' => 'required|integer|min:0',
-            'status' => 'required|in:available,sold out',
-            'event_id' => 'nullable|exists:events,id',
-        ]);
+        try {
+            $ticketCategory = TicketCategory::findOrFail($id);
 
-        $ticketCategory = TicketCategory::findOrFail($id);
-        $ticketCategory->update($validated);
+            $validated = $request->validate([
+                'price' => 'required|integer|min:0|unique:ticket_categories,price,' . $ticketCategory->id,
+                'stock' => 'required|integer|min:0',
+                'sum_ticket' => 'required|integer|min:0',
+                'status' => 'required|in:available,sold out',
+                'event_id' => 'nullable|exists:events,id',
+            ]);
 
-        return redirect()->route('ticket_categories.index')->with('success', 'Ticket category updated successfully.');
+            $ticketCategory->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ticket category updated successfully.',
+                'data' => $ticketCategory,
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket category not found.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the ticket category.',
+            ], 500);
+        }
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        $ticketCategory = TicketCategory::findOrFail($id);
-        $ticketCategory->delete();
+        try {
+            $ticketCategory = TicketCategory::findOrFail($id);
+            $ticketCategory->delete();
 
-        return redirect()->route('ticket_categories.index')->with('success', 'Ticket category deleted successfully.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Ticket category deleted successfully.',
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket category not found.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the ticket category.',
+            ], 500);
+        }
     }
 }

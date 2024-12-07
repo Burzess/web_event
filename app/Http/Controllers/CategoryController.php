@@ -5,79 +5,140 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Organizer;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
     // Menampilkan semua kategori
-    public function index(): View
+    public function index(Request $request): JsonResponse
     {
-        $categories = Category::with('organizer')->get();
-        return view('categories.index', compact('categories'));
-    }
+        try {
+            $categories = Category::with('organizer')->get();
 
-    // Menampilkan form untuk membuat kategori baru
-    public function create(): View
-    {
-        $organizers = Organizer::all();
-        return view('categories.create', compact('organizers'));
+            return response()->json([
+                'success' => true,
+                'data' => $categories,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     // Menyimpan kategori baru
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'organizer_id' => 'required|exists:organizers,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name',
+                'organizer_id' => 'required|exists:organizers,id',
+            ], [
+                'name.required' => 'Nama kategori harus diisi.',
+                'name.unique' => 'Nama kategori sudah digunakan.',
+                'organizer_id.required' => 'Organizer harus dipilih.',
+                'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+            ]);
 
-        Category::create([
-            'name' => $request->input('name'),
-            'organizer_id' => $request->input('organizer_id'),
-        ]);
+            $category = Category::create([
+                'name' => $request->input('name'),
+                'organizer_id' => $request->input('organizer_id'),
+            ]);
 
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil ditambahkan.',
+                'data' => $category,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     // Menampilkan detail kategori berdasarkan ID
+    // public function show(Request $request, $id): JsonResponse
+    // {
+    //     try {
+    //         $category = Category::with('organizer')->findOrFail($id);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $category,
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Kategori tidak ditemukan: ' . $e->getMessage(),
+    //         ], 404);
+    //     }
+    // }
+
     public function show($id): JsonResponse
     {
-        $category = Category::with('organizer')->findOrFail($id);
-        return response()->json($category);
-    }
-
-    // Menampilkan form untuk mengedit kategori
-    public function edit($id): View
-    {
-        $category = Category::findOrFail($id);
-        $organizers = Organizer::all();
-        return view('categories.edit', compact('category', 'organizers'));
+        try {
+            $category = Category::with('organizer')->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $category], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Kategori not found: ' . $e->getMessage()], 404);
+        }
     }
 
     // Mengupdate kategori
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'organizer_id' => 'required|exists:organizers,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name,' . $id,
+                'organizer_id' => 'required|exists:organizers,id',
+            ], [
+                'name.required' => 'Nama kategori harus diisi.',
+                'name.unique' => 'Nama kategori sudah digunakan.',
+                'organizer_id.required' => 'Organizer harus dipilih.',
+                'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+            ]);
 
-        $category = Category::findOrFail($id);
-        $category->update([
-            'name' => $request->input('name'),
-            'organizer_id' => $request->input('organizer_id'),
-        ]);
+            $category = Category::findOrFail($id);
+            $category->update([
+                'name' => $request->input('name'),
+                'organizer_id' => $request->input('organizer_id'),
+            ]);
 
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diubah.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil diubah.',
+                'data' => $category,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // Menghapus kategori berdasarkan ID
-    public function destroy($id)
-    {
-        $category = Category::findOrFail($id);
-        $category->delete();
 
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
+
+
+    // Menghapus kategori berdasarkan ID
+    public function destroy(Request $request, $id): JsonResponse
+    {
+        try {
+            $category = Category::findOrFail($id);
+            $category->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil dihapus.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus kategori: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
