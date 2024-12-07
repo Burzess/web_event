@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamps();
         });
         
-        Schema::create('participant_forgot_password', function (Blueprint $table) {
+        Schema::create('participant_forgot_passwords', function (Blueprint $table) {
             $table->id(); 
             $table->string('code');
             $table->string('status');
@@ -32,8 +32,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('participant_forgot_password');
-        Schema::dropIfExists('participant_refresh_token');
+        Schema::dropIfExists('participant_forgot_passwords');
         Schema::dropIfExists('participants');
     }
 };

@@ -18,12 +18,8 @@ return new class extends Migration
             $table->foreignId('image_id')->nullable()->constrained('images')->onDelete('set null');
             $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null');
             $table->timestamps();
-        });       
+        });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('payments');
