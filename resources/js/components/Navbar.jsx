@@ -2,7 +2,7 @@ import React from 'react'
 import Container from 'react-bootstrap/Container';
 import { Navbar, Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import NavLink from '../Navlink';
+import NavLink from './NavLink';
 
 
 function SNavbar() {
