@@ -44,4 +44,11 @@ class Event extends Model
     {
         return $this->hasMany(TicketCategory::class, 'event');
     }
+
+    protected static function booted()
+    {
+        static::deleting(function ($event) {
+            $event->ticketCategories()->delete();
+        });
+    }
 }
