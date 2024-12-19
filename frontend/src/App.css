@@ -1,0 +1,29 @@
+#root {
+  text-align: center;
+}
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.nav-link {
+  color: #ccc !important;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #fff !important;
+  background-color: #343a40;
+}
+
+.active-link {
+  background-color: #495057 !important;
+  font-weight: bold;
+  color: #fff !important;
+  border-radius: 5px;
+}
+
+
