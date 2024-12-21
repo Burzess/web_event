@@ -1,4 +1,4 @@
-@extends('layouts.admin');
+@extends('layouts.app');
 
 @section('content')
     <main>
@@ -24,7 +24,6 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Created At</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -32,7 +31,6 @@
                             @foreach ($organizers as $organizer)
                                 <tr>
                                     <td>{{ $organizer->name }}</td>
-                                    <td>{{ $organizer->created_at->format('d-m-Y') }}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning btn-sm edit-organizer-btn"
                                             data-id="{{ $organizer->id }}"
