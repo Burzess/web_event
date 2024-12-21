@@ -8,7 +8,7 @@ import SNavbar from './components/Navbar';
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <Router>
-            <SNavbar />
+            <Sidebar />
         </Router>
     </StrictMode>,
 )

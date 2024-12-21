@@ -19,21 +19,22 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
-                'password' => Hash::make('password'),
-                'role' => 1,
-                'organizer' => 1,
+                'password' => Hash::make('password'), // Pastikan mengganti password dengan lebih aman
+                'role_id' => 1, // Sesuaikan dengan ID role di tabel roles
+                'organizer_id' => 1, // Sesuaikan dengan ID organizer di tabel organizers
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            [
-                'name' => 'Organizer User',
-                'email' => 'organizer@example.com',
-                'password' => Hash::make('password'),
-                'role' => 2,
-                'organizer' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            // [
+            //     'name' => 'Organizer User',
+            //     'email' => 'organizer@example.com',
+            //     'password' => Hash::make('password'),
+            //     'role' => 2,
+            //     'organizer' => 1,
+            //     'refresh_token' => null,
+            //     'created_at' => now(),
+            //     'updated_at' => now(),
+            // ],
         ]);
     }
 }
