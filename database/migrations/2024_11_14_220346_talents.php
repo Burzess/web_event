@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null');
             $table->foreignId('image_id')->nullable()->constrained('images')->onDelete('set null');
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
              $table->timestamps();
         });        
     }

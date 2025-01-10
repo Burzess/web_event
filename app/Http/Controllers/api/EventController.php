@@ -9,13 +9,15 @@ use App\Models\Talent;
 use App\Models\Organizer;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Log;
 
 class EventController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
         try {
-            $events = Event::with(['category', 'image', 'talent', 'organizer', 'ticketCategories'])->get();
+            $events = Event::with(['categories', 'image', 'talent', 'organizer'])->get();
+            Log::info($events);
             return response()->json(['success' => true, 'data' => $events], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Gagal mengambil acara.'], 500);
@@ -60,15 +62,15 @@ class EventController extends Controller
                 'venue_name.required' => 'Nama venue harus diisi.',
                 'status.required' => 'Status acara harus dipilih.',
             ]);
-    
+
             $event = Event::create($validated);
-    
+
             //buat ticket categories untuk event
             foreach ($validated['ticket_categories'] as $ticketData) {
                 $ticketData['event_id'] = $event->id; //event_id
                 \App\Models\TicketCategory::create($ticketData);
             }
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Acara dan kategori tiket berhasil dibuat.',
@@ -81,7 +83,7 @@ class EventController extends Controller
             ], 500);
         }
     }
-    
+
 
     public function update(Request $request, Event $event): JsonResponse
     {

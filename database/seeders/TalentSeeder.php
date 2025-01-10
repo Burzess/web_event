@@ -17,32 +17,28 @@ class TalentSeeder extends Seeder
             [
                 'name' => 'John Doe',
                 'organizer_id' => 1, // Pastikan ID ini ada di tabel organizers
-                'image_id' => 1, // Pastikan ID ini ada di tabel images
-                'role_id' => 1, // Pastikan ID ini ada di tabel roles
+                'image_id' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Jane Smith',
                 'organizer_id' => 2, // Pastikan ID ini ada di tabel organizers
-                'image_id' => 2, // Pastikan ID ini ada di tabel images
-                'role_id' => 6, // Pastikan ID ini ada di tabel roles
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Michael Johnson',
                 'organizer_id' => 3, // Pastikan ID ini ada di tabel organizers
-                'image_id' => 3, // Pastikan ID ini ada di tabel images
-                'role_id' => 7, // Pastikan ID ini ada di tabel roles
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Emily Davis',
                 'organizer_id' => 4, // Pastikan ID ini ada di tabel organizers
-                'image_id' => 4, // Pastikan ID ini ada di tabel images
-                'role_id' => 7, // Pastikan ID ini ada di tabel roles
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

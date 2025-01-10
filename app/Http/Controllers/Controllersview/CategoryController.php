@@ -12,18 +12,19 @@ class CategoryController extends Controller
     {
         try {
             $categories = Category::with('organizer')->get();
-            return view('categories.index', ['categories' => $categories]);
+            return view('organizer.categories.index', ['categories' => $categories]);
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal mengambil data kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal mengambil data kategori: ' . $e->getMessage()]);
         }
     }
+
     public function create()
     {
         try {
             $organizers = Organizer::all();
-            return view('categories.create', ['organizers' => $organizers]);
+            return view('organizer.categories.create', ['organizers' => $organizers]);
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memuat form kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal memuat form kategori: ' . $e->getMessage());
         }
     }
 
@@ -32,12 +33,12 @@ class CategoryController extends Controller
         try {
             $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
-                'organizer_id' => 'required|exists:organizers,id',
+                // 'organizer_id' => 'required|exists:organizers,id',
             ], [
                 'name.required' => 'Nama kategori harus diisi.',
                 'name.unique' => 'Nama kategori sudah digunakan.',
-                'organizer_id.required' => 'Organizer harus dipilih.',
-                'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+                // 'organizer_id.required' => 'Organizer harus dipilih.',
+                // 'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
             ]);
 
             $category = Category::create([
@@ -45,9 +46,9 @@ class CategoryController extends Controller
                 'organizer_id' => $request->input('organizer_id'),
             ]);
 
-            return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
+            return redirect()->route('organizer.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal menambahkan kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal menambahkan kategori: ' . $e->getMessage());
         }
     }
 
@@ -55,9 +56,9 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::with('organizer')->findOrFail($id);
-            return view('categories.show', ['category' => $category]);
+            return view('organizer.categories.show', ['category' => $category]);
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Kategori tidak ditemukan: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Kategori tidak ditemukan: ' . $e->getMessage());
         }
     }
 
@@ -66,9 +67,9 @@ class CategoryController extends Controller
         try {
             $category = Category::findOrFail($id);
             $organizers = Organizer::all();
-            return view('categories.edit', ['category' => $category, 'organizers' => $organizers]);
+            return view('organizer.categories.edit', ['category' => $category, 'organizers' => $organizers]);
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memuat form edit kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal memuat form edit kategori: ' . $e->getMessage());
         }
     }
 
@@ -77,23 +78,23 @@ class CategoryController extends Controller
         try {
             $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name,' . $id,
-                'organizer_id' => 'required|exists:organizers,id',
+                // 'organizer_id' => 'required|exists:organizers,id',
             ], [
                 'name.required' => 'Nama kategori harus diisi.',
                 'name.unique' => 'Nama kategori sudah digunakan.',
-                'organizer_id.required' => 'Organizer harus dipilih.',
-                'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+                // 'organizer_id.required' => 'Organizer harus dipilih.',
+                // 'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
             ]);
 
             $category = Category::findOrFail($id);
             $category->update([
                 'name' => $request->input('name'),
-                'organizer_id' => $request->input('organizer_id'),
+                // 'organizer_id' => $request->input('organizer_id'),
             ]);
 
-            return redirect()->route('categories.index')->with('success', 'Kategori berhasil diubah.');
+            return redirect()->route('organizer.categories.index')->with('success', 'Kategori berhasil diubah.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal mengubah kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal mengubah kategori: ' . $e->getMessage());
         }
     }
 
@@ -103,9 +104,9 @@ class CategoryController extends Controller
             $category = Category::findOrFail($id);
             $category->delete();
 
-            return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
+            return redirect()->route('organizer.categories.index')->with('success', 'Kategori berhasil dihapus.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal menghapus kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal menghapus kategori: ' . $e->getMessage());
         }
     }
 }

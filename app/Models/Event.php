@@ -10,34 +10,45 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'date', 'about', 'tagline', 'keypoint', 'venue_name', 'status', 'categories_id', 'image_id', 'talent_id', 'organizer_id'
-     ];
+        'title',
+        'date',
+        'about',
+        'tagline',
+        'keypoint',
+        'venue_name',
+        'status',
+        'categories_id',
+        'image_id',
+        'talent_id',
+        'organizer_id',
+        'user_id',
+    ];
 
     protected $casts = [
-        'keypoint' => 'array', 
+        'keypoint' => 'array',
         'date' => 'datetime',
     ];
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class, 'categories_id'); // Sesuaikan jika nama kolom berbeda
+        return $this->belongsTo(Category::class, 'categories_id');
     }
-    
+
 
     public function image()
     {
-        return $this->belongsTo(Image::class);
+        return $this->belongsTo(Image::class, 'image_id');
     }
 
     public function talent()
     {
-        return $this->belongsTo(Talent::class);
+        return $this->belongsTo(Talent::class, 'talent_id');
     }
-    
+
 
     public function organizer()
     {
-        return $this->belongsTo(Organizer::class);
+        return $this->belongsTo(Organizer::class, 'organizer_id');
     }
 
     public function ticketCategories()

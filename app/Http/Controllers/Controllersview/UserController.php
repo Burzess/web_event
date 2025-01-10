@@ -12,20 +12,24 @@ class UserController extends Controller
     public function index()
     {
         try {
-            $users = User::with(['role', 'organizer'])->get();
-            return view('users.index', compact('users')); // Pastikan view ini ada
+            $user = auth()->id();
+            $users = User::where('created_by', $user)->get();
+            \Log::info($users);
+
+            return view('owner.organizers.index', compact('users'));
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal mengambil data pengguna: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal mengambil data pengguna: ' . $e->getMessage()]);
         }
     }
+
     public function create()
     {
         try {
-            $roles = Role::all();
-            $organizers = Organizer::all();
-            return view('users.create', compact('roles', 'organizers')); 
+            $user = auth()->user();
+            if ($user->hasRole('owner')) return view('owner.organizers.create');
+            if ($user->hasRole('organizer')) return view('organizer.admin.create');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memuat form pembuatan pengguna: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal memuat form pembuatan pengguna: ' . $e->getMessage());
         }
     }
 
@@ -35,54 +39,37 @@ class UserController extends Controller
             'name' => 'required|string|max:255|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:3',
-            'role_id' => 'nullable|exists:roles,id',
-            'organizer_id' => 'nullable|exists:organizers,id',
         ]);
 
         try {
-            User::create([
+            $user = auth()->user();
+            \Log::info($user->id);
+
+            $newUser = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
-                'role_id' => $validated['role_id'],
-                'organizer_id' => $validated['organizer_id'],
+                'created_by' => $user->id,
             ]);
 
-            return redirect()->route('login')->with('success', 'Pengguna berhasil ditambahkan.');
+            if ($user->hasRole('owner')) $newUser->assignRole('organizer');
+            if ($user->hasRole('organizer')) $newUser->assignRole('admin');
+
+
+            \Log::info("success");
+            return redirect()->route('owner.organizers.index')->with('success', 'Organisasi berhasil dibuat.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal menambahkan pengguna: ' . $e->getMessage()]);
+            \Log::error($e->getMessage());
+            return redirect()->route('owner.organizers.index')->with('error', ['message' => 'Gagal menambahkan pengguna: ' . $e->getMessage()]);
         }
     }
 
-    public function show($id)
-    {
-        try {
-            $user = User::with(['role', 'organizer'])->findOrFail($id);
-            return view('users.show', compact('user')); 
-        } catch (\Exception $e) {
-            return view('error', ['message' => 'Pengguna tidak ditemukan.']);
-        }
-    }
-
-    public function edit($id)
-    {
-        try {
-            $user = User::findOrFail($id);
-            $roles = Role::all();
-            $organizers = Organizer::all();
-            return view('users.edit', compact('user', 'roles', 'organizers')); 
-        } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memuat form pengeditan pengguna: ' . $e->getMessage()]);
-        }
-    }
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:users,name,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|string|min:3',
-            'role_id' => 'nullable|exists:roles,id',
-            'organizer_id' => 'nullable|exists:organizers,id',
         ]);
 
         try {
@@ -91,13 +78,11 @@ class UserController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => $request->password ? bcrypt($request->password) : $user->password,
-                'role_id' => $validated['role_id'],
-                'organizer_id' => $validated['organizer_id'],
             ]);
 
-            return redirect()->route('users.index')->with('success', 'Pengguna berhasil diperbarui.');
+            return redirect()->route('owner.organizers.index')->with('success', 'Organisasi berhasil diperbarui.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memperbarui pengguna: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal memperbarui pengguna: ' . $e->getMessage());
         }
     }
 
@@ -109,7 +94,7 @@ class UserController extends Controller
 
             return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal menghapus pengguna: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal menghapus pengguna: ' . $e->getMessage()]);
         }
     }
 }

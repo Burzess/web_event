@@ -23,7 +23,7 @@ class EventSeeder extends Seeder
                 'venue_name' => 'Grand Convention Center',
                 'status' => 'active',
                 'categories_id' => 1, // Pastikan ID ini ada di tabel categories
-                'image_id' => 1, // Pastikan ID ini ada di tabel images
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'talent_id' => 5, // Pastikan ID ini ada di tabel talents
                 'organizer_id' => 1, // Pastikan ID ini ada di tabel organizers
                 'created_at' => now(),
@@ -38,7 +38,7 @@ class EventSeeder extends Seeder
                 'venue_name' => 'City Park Arena',
                 'status' => 'active',
                 'categories_id' => 2, // Pastikan ID ini ada di tabel categories
-                'image_id' => 2, // Pastikan ID ini ada di tabel images
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'talent_id' => 6, // Pastikan ID ini ada di tabel talents
                 'organizer_id' => 2, // Pastikan ID ini ada di tabel organizers
                 'created_at' => now(),
@@ -53,7 +53,7 @@ class EventSeeder extends Seeder
                 'venue_name' => 'Downtown Art Gallery',
                 'status' => 'inactive',
                 'categories_id' => 3, // Pastikan ID ini ada di tabel categories
-                'image_id' => 3, // Pastikan ID ini ada di tabel images
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'talent_id' => 7, // Pastikan ID ini ada di tabel talents
                 'organizer_id' => 3, // Pastikan ID ini ada di tabel organizers
                 'created_at' => now(),
@@ -68,7 +68,7 @@ class EventSeeder extends Seeder
                 'venue_name' => 'Innovation Hub',
                 'status' => 'active',
                 'categories_id' => 4, // Pastikan ID ini ada di tabel categories
-                'image_id' => 4, // Pastikan ID ini ada di tabel images
+                'image_id' => null, // Pastikan ID ini ada di tabel images
                 'talent_id' => 8, // Pastikan ID ini ada di tabel talents
                 'organizer_id' => 4, // Pastikan ID ini ada di tabel organizers
                 'created_at' => now(),

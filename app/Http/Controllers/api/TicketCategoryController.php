@@ -13,7 +13,7 @@ class TicketCategoryController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $ticketCategories = TicketCategory::with('event')->get();
+            $ticketCategories = TicketCategory::with('event', 'event.categories', 'event.image', 'event.talent', 'event.organizer')->get();
 
             return response()->json([
                 'success' => true,

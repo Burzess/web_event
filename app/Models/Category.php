@@ -8,7 +8,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'organizer_id']; 
+    protected $fillable = ['name', 'user_id'];
 
     // Relasi dengan Organizer
     public function organizer()

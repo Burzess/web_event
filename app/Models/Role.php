@@ -15,9 +15,9 @@ class Role extends Model
     {
         return $this->hasMany(User::class);
     }
-    public function talents()
-    {
-        return $this->hasMany(Talent::class);
-    }
+    // public function talents()
+    // {
+    //     return $this->hasMany(Talent::class);
+    // }
     
 }

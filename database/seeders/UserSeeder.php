@@ -25,16 +25,16 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // [
-            //     'name' => 'Organizer User',
-            //     'email' => 'organizer@example.com',
-            //     'password' => Hash::make('password'),
-            //     'role' => 2,
-            //     'organizer' => 1,
-            //     'refresh_token' => null,
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ],
+            [
+                'name' => 'Organizer User',
+                'email' => 'organizer@example.com',
+                'password' => Hash::make('password'),
+                'role' => 3,
+                'organizer' => 1,
+                'refresh_token' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
             ['name' => 'Admin'],
             ['name' => 'Owner'],
             ['name' => 'Organizer'],
-            ['name' => 'Participant'],
+            // ['name' => 'Participant'],
         ]);
     }
 }

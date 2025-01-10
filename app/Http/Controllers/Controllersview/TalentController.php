@@ -14,9 +14,9 @@ class TalentController extends Controller
     {
         try {
             $talents = Talent::with(['organizer', 'image', 'role'])->get();
-            return view('talents.index', compact('talents')); // Pastikan view ini ada
+            return view('organizer.talents.index', compact('talents')); // Pastikan view ini ada
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal mengambil data talent: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal mengambil data talent: ' . $e->getMessage()]);
         }
     }
 
@@ -26,9 +26,9 @@ class TalentController extends Controller
             $organizers = Organizer::all();
             $images = Image::all();
             $roles = Role::all();
-            return view('talents.create', compact('organizers', 'images', 'roles')); // Pastikan view ini ada
+            return view('organizer.talents.create', compact('organizers', 'images', 'roles')); // Pastikan view ini ada
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memuat form pembuatan talent: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal memuat form pembuatan talent: ' . $e->getMessage()]);
         }
     }
 
@@ -44,18 +44,18 @@ class TalentController extends Controller
 
             Talent::create($request->only(['name', 'organizer_id', 'image_id', 'role_id']));
 
-            return redirect()->route('talents.index')->with('success', 'Talent berhasil ditambahkan.');
+            return redirect()->route('organizer.talents.index')->with('success', 'Talent berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal menambahkan talent: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal menambahkan talent: ' . $e->getMessage()]);
         }
     }
     public function show($id)
     {
         try {
             $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
-            return view('talents.show', compact('talent')); // Pastikan view ini ada
+            return view('organizer.talents.show', compact('talent')); // Pastikan view ini ada
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Talent tidak ditemukan: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Talent tidak ditemukan: ' . $e->getMessage()]);
         }
     }
     public function edit($id)
@@ -65,9 +65,9 @@ class TalentController extends Controller
             $organizers = Organizer::all();
             $images = Image::all();
             $roles = Role::all();
-            return view('talents.edit', compact('talent', 'organizers', 'images', 'roles')); // Pastikan view ini ada
+            return view('organizer.talents.edit', compact('talent', 'organizers', 'images', 'roles')); // Pastikan view ini ada
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Talent tidak ditemukan: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Talent tidak ditemukan: ' . $e->getMessage()]);
         }
     }
 
@@ -84,9 +84,9 @@ class TalentController extends Controller
             $talent = Talent::findOrFail($id);
             $talent->update($request->only(['name', 'organizer_id', 'image_id', 'role_id']));
 
-            return redirect()->route('talents.index')->with('success', 'Talent berhasil diperbarui.');
+            return redirect()->route('organizer.talents.index')->with('success', 'Talent berhasil diperbarui.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal memperbarui talent: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal memperbarui talent: ' . $e->getMessage()]);
         }
     }
 
@@ -96,9 +96,9 @@ class TalentController extends Controller
             $talent = Talent::findOrFail($id);
             $talent->delete();
 
-            return redirect()->route('talents.index')->with('success', 'Talent berhasil dihapus.');
+            return redirect()->route('organizer.talents.index')->with('success', 'Talent berhasil dihapus.');
         } catch (\Exception $e) {
-            return view('error', ['message' => 'Gagal menghapus talent: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', ['message' => 'Gagal menghapus talent: ' . $e->getMessage()]);
         }
     }
 }
