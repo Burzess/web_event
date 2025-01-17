@@ -16,6 +16,8 @@ class Participant extends Authenticatable
         'password',
         'status',
         'active_code',
+        'gauth_id',
+        'gauth_type',
     ];
 
     protected $hidden = [

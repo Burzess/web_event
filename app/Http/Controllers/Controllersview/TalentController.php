@@ -13,10 +13,10 @@ class TalentController extends Controller
     public function index()
     {
         try {
-            $talents = Talent::with(['organizer', 'image', 'role'])->get();
+            $talents = Talent::with(['image'])->where('user_id', auth()->id())->get();
             return view('organizer.talents.index', compact('talents')); // Pastikan view ini ada
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', ['message' => 'Gagal mengambil data talent: ' . $e->getMessage()]);
+            return redirect()->back()->with('error', 'Gagal mengambil data talent: ' . $e->getMessage());
         }
     }
 
@@ -34,15 +34,15 @@ class TalentController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:talents,name',
-                'organizer_id' => 'nullable|exists:organizers,id',
-                'image_id' => 'nullable|exists:images,id',
-                'role_id' => 'nullable|exists:roles,id',
-            ]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'image_id' => 'nullable|exists:images,id',
+        ]);
 
-            Talent::create($request->only(['name', 'organizer_id', 'image_id', 'role_id']));
+        try {
+            $talent = new Talent($validated);
+            $talent->user_id = auth()->id();
+            $talent->save();
 
             return redirect()->route('organizer.talents.index')->with('success', 'Talent berhasil ditambahkan.');
         } catch (\Exception $e) {
@@ -52,7 +52,7 @@ class TalentController extends Controller
     public function show($id)
     {
         try {
-            $talent = Talent::with(['organizer', 'image', 'role'])->findOrFail($id);
+            $talent = Talent::with(['image'])->findOrFail($id);
             return view('organizer.talents.show', compact('talent')); // Pastikan view ini ada
         } catch (\Exception $e) {
             return redirect()->back()->with('error', ['message' => 'Talent tidak ditemukan: ' . $e->getMessage()]);
@@ -61,10 +61,7 @@ class TalentController extends Controller
     public function edit($id)
     {
         try {
-            $talent = Talent::findOrFail($id);
-            $organizers = Organizer::all();
-            $images = Image::all();
-            $roles = Role::all();
+            $talent = Talent::with('image')->findOrFail($id);
             return view('organizer.talents.edit', compact('talent', 'organizers', 'images', 'roles')); // Pastikan view ini ada
         } catch (\Exception $e) {
             return redirect()->back()->with('error', ['message' => 'Talent tidak ditemukan: ' . $e->getMessage()]);
@@ -73,16 +70,14 @@ class TalentController extends Controller
 
     public function update(Request $request, $id)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:talents,name,' . $id,
-                'organizer_id' => 'nullable|exists:organizers,id',
-                'image_id' => 'nullable|exists:images,id',
-                'role_id' => 'nullable|exists:roles,id',
-            ]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:talents,name,' . $id,
+            'image_id' => 'nullable|exists:images,id',
+        ]);
 
+        try {
             $talent = Talent::findOrFail($id);
-            $talent->update($request->only(['name', 'organizer_id', 'image_id', 'role_id']));
+            $talent->update($validated);
 
             return redirect()->route('organizer.talents.index')->with('success', 'Talent berhasil diperbarui.');
         } catch (\Exception $e) {

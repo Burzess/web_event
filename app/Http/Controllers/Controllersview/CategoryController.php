@@ -11,10 +11,10 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         try {
-            $categories = Category::with('organizer')->get();
+            $categories = Category::with('user')->where('user_id', auth()->id())->get();
             return view('organizer.categories.index', ['categories' => $categories]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', ['message' => 'Gagal mengambil data kategori: ' . $e->getMessage()]);
+            return redirect()->back()->with('error',  'Gagal mengambil data kategori: ' . $e->getMessage());
         }
     }
 
@@ -30,21 +30,12 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name',
-                // 'organizer_id' => 'required|exists:organizers,id',
-            ], [
-                'name.required' => 'Nama kategori harus diisi.',
-                'name.unique' => 'Nama kategori sudah digunakan.',
-                // 'organizer_id.required' => 'Organizer harus dipilih.',
-                // 'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
-            ]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-            $category = Category::create([
-                'name' => $request->input('name'),
-                'organizer_id' => $request->input('organizer_id'),
-            ]);
+        try {
+            $category = Category::create($validated + ['user_id' => auth()->id()]);
 
             return redirect()->route('organizer.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
         } catch (\Exception $e) {
@@ -66,8 +57,7 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::findOrFail($id);
-            $organizers = Organizer::all();
-            return view('organizer.categories.edit', ['category' => $category, 'organizers' => $organizers]);
+            return view('organizer.categories.edit', ['category' => $category]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal memuat form edit kategori: ' . $e->getMessage());
         }
@@ -75,26 +65,25 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name,' . $id,
-                // 'organizer_id' => 'required|exists:organizers,id',
-            ], [
-                'name.required' => 'Nama kategori harus diisi.',
-                'name.unique' => 'Nama kategori sudah digunakan.',
-                // 'organizer_id.required' => 'Organizer harus dipilih.',
-                // 'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
-            ]);
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            // 'organizer_id' => 'required|exists:organizers,id',
+        ], [
+            'name.required' => 'Nama kategori harus diisi.',
+            'name.unique' => 'Nama kategori sudah digunakan.',
+            // 'organizer_id.required' => 'Organizer harus dipilih.',
+            // 'organizer_id.exists' => 'Organizer yang dipilih tidak valid.',
+        ]);
 
+        try {
             $category = Category::findOrFail($id);
             $category->update([
                 'name' => $request->input('name'),
-                // 'organizer_id' => $request->input('organizer_id'),
             ]);
 
             return redirect()->route('organizer.categories.index')->with('success', 'Kategori berhasil diubah.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal mengubah kategori: ' . $e->getMessage());
+            return redirect()->back()->with('error', ['message' => 'Gagal memperbarui kategori: ' . $e->getMessage()]);
         }
     }
 

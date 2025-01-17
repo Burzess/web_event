@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('categories_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->foreignId('image_id')->nullable()->constrained('images')->onDelete('set null');
             $table->foreignId('talent_id')->nullable()->constrained('talents')->onDelete('set null');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers')->onDelete('set null');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });             
     }

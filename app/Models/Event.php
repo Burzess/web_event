@@ -53,7 +53,7 @@ class Event extends Model
 
     public function ticketCategories()
     {
-        return $this->hasMany(TicketCategory::class, 'event');
+        return $this->hasMany(TicketCategory::class);
     }
 
     protected static function booted()

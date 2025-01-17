@@ -10,6 +10,7 @@ class TicketCategory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'type',
         'price', 
         'stock', 
         'sum_ticket', 
@@ -20,6 +21,6 @@ class TicketCategory extends Model
     // Relasi ke Event
     public function event()
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class, 'event_id', 'id');
     }
 }

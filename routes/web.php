@@ -5,6 +5,8 @@ use App\Http\Controllers\Controllersview\OrderController;
 use App\Http\Controllers\Controllersview\OrganizerController;
 use App\Http\Controllers\Controllersview\TalentController;
 use App\Http\Controllers\Controllersview\UserController;
+use App\Http\Controllers\Controllersview\EventController;
+use App\Http\Controllers\ParticipantAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -45,6 +47,7 @@ Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(functi
         'update' => 'organizer.talents.update',
         'destroy' => 'organizer.talents.destroy',
     ]);
+    Route::resource('events', EventController::class);
 });
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
@@ -54,4 +57,19 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 Route::prefix('auth')->group(function () {
     Auth::routes();
 });
+
+Route::get('/', function () {
+    return view('pages.home');
+});
+
+Route::prefix('participant')->group(function () {
+    Route::get('/login', [ParticipantAuthController::class, 'showLoginForm'])->name('participant.login');
+    Route::post('/login', [ParticipantAuthController::class, 'login']);
+    Route::get('/register', [ParticipantAuthController::class, 'showRegistForm'])->name('participant.register');
+    Route::post('/register', [ParticipantAuthController::class, 'register']);
+    Route::post('/logout', [ParticipantAuthController::class, 'logout'])->name('participant.logout');
+});
+
+Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');  
+Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
 

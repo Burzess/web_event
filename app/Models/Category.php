@@ -10,9 +10,8 @@ class Category extends Model
 
     protected $fillable = ['name', 'user_id'];
 
-    // Relasi dengan Organizer
-    public function organizer()
+    public function user()
     {
-        return $this->belongsTo(Organizer::class); 
+        return $this->belongsTo(User::class);
     }
 }

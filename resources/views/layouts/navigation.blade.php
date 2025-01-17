@@ -18,10 +18,10 @@
                             <a class="nav-link {{ request()->is('organizer/categories') ? 'active' : '' }}"
                                 href="/organizer/categories">Categories</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link {{ request()->is('organizer/talents') ? 'active' : '' }}"
                                 href="/organizer/talents">Talents</a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('organizer/talents') ? 'active' : '' }}"
                                 href="/organizer/talents">Talents</a>

@@ -37,7 +37,7 @@
                         <a class="nav-link" href="#">About</a>
                     </div>
                     <div class="d-grid">
-                        <a class="btn-navy" href="signin.html">
+                        <a class="btn-navy" href="{{route('participant.login')}}">
                             Sign In
                         </a>
                     </div>
