@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Event;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('pages.home');
+        $events = Event::with('ticketCategories')
+                        ->where('status', 'active')
+                        ->get();
+        \Log::info($events);
+        return view('pages.home', compact('events'));
     }
 }

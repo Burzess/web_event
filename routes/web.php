@@ -9,12 +9,14 @@ use App\Http\Controllers\Controllersview\EventController;
 use App\Http\Controllers\ParticipantAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 
 
 // Route::middleware(['auth', 'role:owner'])->get('/', function () {
 //     return view('layouts.app');
 // });
 
+// ROUTE OWNER
 Route::prefix('owner')->middleware(['auth', 'role:owner'])->group(function () {
     Route::get('dashboard', function(){
         return view('owner.dashboard');
@@ -26,9 +28,18 @@ Route::prefix('owner')->middleware(['auth', 'role:owner'])->group(function () {
         'update' => 'owner.organizers.update',
         'destroy' => 'owner.organizers.destroy',
     ]);
+    Route::get('/events', function(){
+        $events = \App\Models\Event::whereHas('user', function ($query) {
+            $query->where('created_by', auth()->id());
+        })->get();
+        return view('owner.events.index', compact('events'));
+    })->name('owner.events');
+    Route::get('/events/approve/{id}', 'App\Http\Controllers\Controllersview\EventController@approveEvent')->name('events.approve');
     Route::resource('orders', OrderController::class);
 });
 
+
+// ROUTE ORGANIZER
 Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(function () {
     Route::get('dashboard', function(){
         return view('organizer.dashboard');
@@ -50,18 +61,19 @@ Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(functi
     Route::resource('events', EventController::class);
 });
 
+// ROUTE ADMIN
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('orders', CategoryController::class);
 });
 
+// ROUTE AUTH UNTUK USER
 Route::prefix('auth')->group(function () {
     Auth::routes();
 });
 
-Route::get('/', function () {
-    return view('pages.home');
-});
+Route::get('/', [HomeController::class, 'index']);
 
+// ROUTE PARTICIPANT
 Route::prefix('participant')->group(function () {
     Route::get('/login', [ParticipantAuthController::class, 'showLoginForm'])->name('participant.login');
     Route::post('/login', [ParticipantAuthController::class, 'login']);
@@ -70,6 +82,7 @@ Route::prefix('participant')->group(function () {
     Route::post('/logout', [ParticipantAuthController::class, 'logout'])->name('participant.logout');
 });
 
+// ROUTE LOGIN PARTICIPAN WITH GOOGLE
 Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');  
 Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
 

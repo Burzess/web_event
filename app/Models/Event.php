@@ -29,6 +29,10 @@ class Event extends Model
         'date' => 'datetime',
     ];
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
     public function categories()
     {
         return $this->belongsTo(Category::class, 'categories_id');
