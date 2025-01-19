@@ -20,28 +20,26 @@
                         Sign In
                     </div>
                 </div>
-                <form action="" class="form-login d-flex flex-column mt-4 mt-md-0 p-30">
+                <form action="{{ route('participant.login') }}" method="POST" class="form-login d-flex flex-column mt-4 mt-md-0 p-30">
+                    @csrf
                     <!-- Email -->
                     <div class="d-flex flex-column align-items-start">
                         <label for="email_address" class="form-label">
                             Email
                         </label>
-                        <input type="email" class="form-control" id="email_address" placeholder="semina@bwa.com">
+                        <input type="email" class="form-control" id="email_address" name="email" placeholder="semina@bwa.com">
                     </div>
                     <!-- Password -->
                     <div class="d-flex flex-column align-items-start">
                         <label for="password" class="form-label">
                             Password (6 characters)
                         </label>
-                        <input type="password" class="form-control" id="password" placeholder="Type your password">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Type your password">
                     </div>
                     <div class="d-grid mt-2 gap-4">
-                        <!-- <button class="btn-green">
+                        <button type="submit" class="btn-green">
                             Sign In
-                        </button> -->
-                        <a href="" class="btn-green">
-                            Sign In
-                        </a>
+                        </button>
                         <a href="{{ route('oauth.google') }}" class="btn-navy">
                             Login with Google
                         </a>

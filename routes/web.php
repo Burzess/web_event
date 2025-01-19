@@ -8,7 +8,6 @@ use App\Http\Controllers\Controllersview\UserController;
 use App\Http\Controllers\Controllersview\EventController;
 use App\Http\Controllers\ParticipantAuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 
 
@@ -58,7 +57,13 @@ Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(functi
         'update' => 'organizer.talents.update',
         'destroy' => 'organizer.talents.destroy',
     ]);
-    Route::resource('events', EventController::class);
+    Route::resource('events', EventController::class)->names([
+        'index' => 'organizer.events.index',
+        'create' => 'organizer.events.create',
+        'store' => 'organizer.events.store',
+        'update' => 'organizer.events.update',
+        'destroy' => 'organizer.events.destroy',
+    ]);
 });
 
 // ROUTE ADMIN
@@ -71,7 +76,9 @@ Route::prefix('auth')->group(function () {
     Auth::routes();
 });
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('event.detail');
+
 
 // ROUTE PARTICIPANT
 Route::prefix('participant')->group(function () {

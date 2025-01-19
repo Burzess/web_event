@@ -26,44 +26,77 @@
                     </p>
                 </div>
                 <div class="col-md-6">
-                    <form action="" class="form-login d-flex flex-column mt-4 mt-md-0">
+                    <form action="{{ route('participant.register') }}" method="POST" class="form-login d-flex flex-column mt-4 mt-md-0">
+                        @csrf
                         <!-- First Name -->
                         <div class="d-flex flex-column align-items-start">
                             <label for="first_name" class="form-label">
                                 First Name
                             </label>
-                            <input type="text" placeholder="First name here" class="form-control" id="first_name">
+                            <input type="text" name="first_name" placeholder="First name here" class="form-control @error('first_name') is-invalid @enderror" id="first_name" value="{{ old('first_name') }}">
+                            @error('first_name')
+                                <div class="text-danger">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <!-- Last Name -->
                         <div class="d-flex flex-column align-items-start">
                             <label for="last_name" class="form-label">
                                 Last Name
                             </label>
-                            <input type="text" placeholder="Last name here" class="form-control" id="last_name">
+                            <input type="text" name="last_name" placeholder="Last name here" class="form-control @error('last_name') is-invalid @enderror" id="last_name" value="{{ old('last_name') }}">
+                            @error('last_name')
+                                <div class="text-danger">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <!-- Email -->
                         <div class="d-flex flex-column align-items-start">
                             <label for="email_address" class="form-label">
                                 Email
                             </label>
-                            <input type="email" class="form-control" id="email_address" placeholder="semina@bwa.com">
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="email_address" placeholder="semina@bwa.com" value="{{ old('email') }}">
+                            @error('email')
+                                <div class="text-danger">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <!-- Password -->
                         <div class="d-flex flex-column align-items-start">
                             <label for="password" class="form-label">
                                 Password (6 characters)
                             </label>
-                            <input type="password" class="form-control" id="password" placeholder="Type your password">
+                            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="Type your password">
+                            @error('password')
+                                <div class="text-danger">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <!-- Confirm Password -->
+                        <div class="d-flex flex-column align-items-start">
+                            <label for="password_confirmation" class="form-label">
+                                Confirm Password
+                            </label>
+                            <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Confirm your password">
                         </div>
                         <!-- Role -->
                         <div class="d-flex flex-column align-items-start">
                             <label for="role" class="form-label">
-                                Role
+                                Status
                             </label>
-                            <input type="text" class="form-control" id="role" placeholder="ex: Product Designer">
+                            <input type="text" name="status" class="form-control @error('status') is-invalid @enderror" id="status" placeholder="ex: Product Designer" value="{{ old('status') }}">
+                            @error('status')
+                                <div class="text-danger">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <div class="d-grid mt-2">
-                            <button class="btn-green">
+                            <button type="submit" class="btn-green">
                                 Sign Up
                             </button>
                         </div>

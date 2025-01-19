@@ -1,50 +1,112 @@
 @extends('pages.app')
 
 @section('content')
-    <header class="header bg-navy">
+    <div class="preview-image bg-navy text-center">
+        @if ($event->image)
+            <img src="{{ asset('storage/' . $event->image->file_path) }}" alt="semina" class="img-content" />
+        @else
+            <img src="{{ asset('assets/images/default-image.jpg') }}" alt="default" class="img-content" />
+        @endif
+    </div>
 
-        <div class="hero">
-            <div class="hero-headline">
-                Expand Your <span class="text-gradient-blue">Knowledge</span> <br class="d-none d-lg-block" />
-                by <span class="text-gradient-pink">Joining</span> Our Greatest Events
+    <div class="details-content container">
+        <div class="d-flex flex-wrap justify-content-lg-center gap">
+            <!-- Left Side Description -->
+            <div class="d-flex flex-column description">
+                <div class="headline">
+                    {{ $event->title }}
+                </div>
+                <div class="event-details">
+                    <h6>Event Details</h6>
+                    <p class="details-paragraph">
+                        {{ $event->about }}
+                    </p>
+                </div>
+                <div class="keypoints">
+                    @if ($event->keypoints)
+                        @foreach (json_decode($event->keypoints, true) as $keypoint)
+                            <div class="d-flex align-items-start gap-3">
+                                <img src="assets/icons/ic-check.svg" alt="semina">
+                                <span>{{ $keypoint }}</span>
+                            </div>
+                        @endforeach
+                    @else
+                        <p></p>
+                    @endif
+                </div>
+                <div class="map-location">
+                    <h6>Event Location</h6>
+                    <div class="map-placeholder">
+                        <div class="maps">
+                            <img src="assets/images/maps.png" alt="">
+                            <div class="absolute d-flex justify-content-center align-items-center" id="hoverMe">
+                                <a href="#" class="btn-navy" id="btn-maps">
+                                    View in Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p class="hero-paragraph">
-                Kami menyediakan berbagai acara terbaik untuk membantu <br class="d-none d-lg-block" />
-                anda dalam meningkatkan skills di bidang teknologi
-            </p>
-            <a href="#grow-today" class="btn-green">
-                Browse Now
-            </a>
-        </div>
 
-        <div class="d-flex flex-row flex-nowrap justify-content-center align-items-center gap-5 header-image">
-            <img src="assets/images/1.png" alt="semina"/ class="img-1">
-            <img src="assets/images/2.png" alt="semina"/ class="img-2">
-            <img src="assets/images/1.png" alt="semina"/ class="img-1">
+            <!-- Card Event -->
+            <div class="d-flex flex-column card-event">
+                <!-- Speaker Information -->
+                <h6>Your Speaker</h6>
+                <div class="d-flex align-items-center gap-3 mt-3">
+                    @if ($event->talent)
+                        @if ($event->talent->image)
+                            <img src="{{ asset('storage/' . $event->talent->image->file_path) }}" alt="semina"
+                                width="60">
+                        @else
+                            <img src="assets/images/default-image.jpg" alt="default" width="60">
+                        @endif
+                        <div>
+                            <div class="speaker-name">
+                                {{ $event->talent->name }}
+                            </div>
+                            <span class="occupation">{{ $event->talent->occupation }}</span>
+                        </div>
+                    @else
+                        <img src="assets/images/default-image.jpg" alt="default" width="60">
+                        <div>
+                            <div class="speaker-name">Tidak ada informasi pembicara.</div>
+                            <span class="occupation">N/A</span>
+                        </div>
+                    @endif
+                </div>
+                <hr>
+                <!-- Ticket Information -->
+                <h6>Get Ticket</h6>
+                @foreach ($event->ticketCategories as $ticketCategory)
+                    <div class="price my-3">{{ $ticketCategory->price }}<span>/person</span></div>
+                @endforeach
+                <div class="d-flex gap-3 align-items-center card-details">
+                    <img src="../assets/icons/ic-marker.svg" alt="semina"> {{ $event->venue_name }}
+                </div>
+                <div class="d-flex gap-3 align-items-center card-details">
+                    <img src="../assets/icons/ic-time.svg" alt="semina">
+                    {{ \Carbon\Carbon::parse($event->date)->format('H:i') }} WIB
+                </div>
+                <div class="d-flex gap-3 align-items-center card-details">
+                    <img src="../assets/icons/ic-calendar.svg" alt="semina">
+                    {{ \Carbon\Carbon::parse($event->date)->format('d F Y') }}
+                </div>
+                <a href="checkout.html" class="btn-green">Join Now</a>
+            </div>
         </div>
-    </header>
-
-    <section class="brand-partner text-center">
-        <p>Events held by top & biggest global companies</p>
-        <div class="d-flex flex-row flex-wrap justify-content-center align-items-center">
-            <img src="assets/images/apple-111.svg" alt="semina" />
-            <img src="assets/images/Adobe.svg" alt="semina" />
-            <img src="assets/images/slack-21.svg" alt="semina" />
-            <img src="assets/images/spotify-11.svg" alt="semina" />
-            <img src="assets/images/google-2015.svg" alt="semina" />
-        </div>
-    </section>
+    </div>
 
     <section class="grow-today">
         <div class="container">
-            <div class="sub-title mb-1" id="grow-today">
-                <span class="text-gradient-pink">Grow Today</span>
+            <div class="sub-title mb-1">
+                <span class="text-gradient-pink">Next One</span>
             </div>
             <div class="title">
-                Featured Events
+                Similiar Events
             </div>
             <div class="mt-5 row gap">
-                @foreach ($events as $event)
+                @foreach ($similarEvents as $event)
                     <!-- CARD -->
                     <div class="col-lg-3 col-md-6 col-12">
                         <div class="card-grow h-100">
@@ -58,7 +120,7 @@
                             @if ($event->image)
                                 <img src="{{ asset('storage/' . $event->image->file_path) }}" alt="semina" />
                             @else
-                                <img src="{{ asset('assets/images/default-image.jpg') }}" alt="default" />
+                                <img src="assets/images/default-image.jpg" alt="default" />
                             @endif
                             <div class="card-content">
                                 <div class="card-title">
@@ -70,7 +132,7 @@
                                 <div class="description">
                                     {{ $event->venue_name }}, {{ $event->date->format('d M Y') }}
                                 </div>
-                                @if(isset($event) && $event->id)
+                                @if (isset($event) && $event->id)
                                     <a href="{{ route('event.detail', $event) }}" class="stretched-link"></a>
                                 @else
                                     <span>Event tidak tersedia.</span>
@@ -83,7 +145,7 @@
         </div>
     </section>
 
-    {{-- <section class="stories">
+    <section class="stories">
         <div class="d-flex flex-row justify-content-center align-items-center container">
             <img src="assets/images/story.png" alt="semina" class="d-none d-lg-block" width="515" />
             <div class="d-flex flex-column">
@@ -104,13 +166,13 @@
                 <a href="#" class="btn-navy">Read</a>
             </div>
         </div>
-    </section> --}}
+    </section>
 
     <section class="statistics container">
         <div class="d-flex flex-row flex-wrap justify-content-center align-items-center gap-5">
             <div class="d-flex flex-column align-items-center gap-1">
                 <div class="title">
-                    {{ $totalEvents }}K+
+                    190K+
                 </div>
                 <p>
                     Events Created
@@ -119,7 +181,7 @@
             <div class="vr"></div>
             <div class="d-flex flex-column align-items-center gap-1">
                 <div class="title">
-                    {{ $totalParticipants }}M
+                    3M
                 </div>
                 <p>
                     People Joined
@@ -137,7 +199,7 @@
             <div class="vr"></div>
             <div class="d-flex flex-column align-items-center gap-1">
                 <div class="title">
-                    {{ $totalTalents }}K+
+                    113K+
                 </div>
                 <p>
                     Top Speakers
@@ -146,8 +208,7 @@
         </div>
     </section>
 
-    <x-footer />
-    {{-- <footer class="footer bg-navy">
+    <footer class="footer bg-navy">
         <div class="container">
             <a href="index.html">
                 <img src="assets/images/logo.svg" alt="semina" />
@@ -183,13 +244,28 @@
                 All Rights Reserved. Semina Angga 2022.
             </div>
         </div>
-    </footer> --}}
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
         integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
         integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous">
+    </script>
+
+    <script>
+        document.getElementById("hoverMe").addEventListener("mouseover", mouseOver);
+        document.getElementById("hoverMe").addEventListener("mouseout", mouseOut);
+
+        function mouseOver() {
+            document.getElementById("btn-maps").style.opacity = "100"
+            document.getElementById("hoverMe").style.backgroundColor = "#151a2638"
+        }
+
+        function mouseOut() {
+            document.getElementById("btn-maps").style.opacity = "0"
+            document.getElementById("hoverMe").style.backgroundColor = "transparent"
+        }
     </script>
 
 @endsection

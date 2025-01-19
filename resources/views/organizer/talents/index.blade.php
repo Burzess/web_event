@@ -20,12 +20,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('organizer.talents.store') }}" method="POST">
+                    <form action="{{ route('organizer.talents.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Talent</label>
                             <input type="text" class="form-control" id="name" name="name" required>
                             @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="image" name="image" required>
+                            @error('image')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -58,13 +65,20 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="{{ route('organizer.talents.update', $talent->id) }}" method="POST">
+                                        <form action="{{ route('organizer.talents.update', $talent->id) }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             @method('PUT')
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Nama Talent</label>
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ $talent->name }}" required>
                                                 @error('name')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="image" class="form-label">Upload Image</label>
+                                                <input type="file" class="form-control" id="image" name="image">
+                                                @error('image')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>

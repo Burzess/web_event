@@ -36,10 +36,17 @@ class TalentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'image_id' => 'nullable|exists:images,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         try {
+            if ($request->file('image')) {
+                $image = \App\Models\Image::create([
+                    'name' => $request->file('image')->getClientOriginalName(),
+                    'file_path' => $request->file('image')->store('images', 'public'),
+                ]);
+                $validated['image_id'] = $image->id;
+            }
             $talent = new Talent($validated);
             $talent->user_id = auth()->id();
             $talent->save();
@@ -72,10 +79,16 @@ class TalentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:talents,name,' . $id,
-            'image_id' => 'nullable|exists:images,id',
         ]);
 
         try {
+            if ($request->file('image')) {
+                $image = \App\Models\Image::create([
+                    'name' => $request->file('image')->getClientOriginalName(),
+                    'file_path' => $request->file('image')->store('images', 'public'),
+                ]);
+                $validated['image_id'] = $image->id;
+            }
             $talent = Talent::findOrFail($id);
             $talent->update($validated);
 

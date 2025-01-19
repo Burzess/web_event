@@ -10,7 +10,7 @@
         </div>
     @endif
     <div class="mb-3">
-        <a href="{{ route('events.create') }}" class="btn btn-primary">Tambah Event</a>
+        <a href="{{ route('organizer.events.create') }}" class="btn btn-primary">Tambah Event</a>
     </div>
     <table class="table">
         <thead>

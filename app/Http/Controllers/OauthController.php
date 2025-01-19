@@ -23,7 +23,7 @@ class OauthController extends Controller
 
             if($finduser){
 
-                Auth::login($finduser);
+                Auth::guard('participant')->login($finduser);
 
                 return redirect('/');
 
@@ -36,7 +36,7 @@ class OauthController extends Controller
                     'password' => bcrypt($user->id),
                 ]);
 
-                Auth::login($newUser);
+                Auth::guard('participant')->login($newUser);
 
                 return redirect('/');
             }

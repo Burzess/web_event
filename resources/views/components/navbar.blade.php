@@ -2,8 +2,8 @@
 <section class="bg-navy">
     <nav class="container navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">
-                <img src="assets/images/logo.svg" alt="semina" />
+            <a class="navbar-brand" href="{{route('home')}}">
+                <img src="../assets/images/logo.svg" alt="semina" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
@@ -12,28 +12,43 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav mx-auto my-3 my-lg-0">
-                    <x-nav-link class="nav-link" href="index.html" :active="request()->routeIs('home')">Home</x-nav-link>
+                    <x-nav-link class="nav-link" href="{{ route('home')}}" :active="request()->routeIs('home')">Home</x-nav-link>
                     <x-nav-link class="nav-link" href="#">Browse</x-nav-link>
                     <x-nav-link class="nav-link" href="#">Stories</x-nav-link>
                     <x-nav-link class="nav-link" href="#">About</x-nav-link>
                 </div>
                 <div class="navbar-nav ms-auto">
-                    <div
-                        class="nav-item dropdown d-flex flex-column flex-lg-row align-items-lg-center authenticated gap-3">
-                        <span class="text-light d-none d-lg-block">Hello, Shayna M</span>
+                    <div class="nav-item dropdown d-flex flex-column flex-lg-row align-items-lg-center authenticated gap-3">
+                        @if(Auth::guard('participant')->user())
+                            <span class="text-light d-none d-lg-block">Hello, {{ Auth::guard('participant')->user()->name }}</span>
+                        @else
+                            <span class="text-light d-none d-lg-block">Hello, Guest</span>
+                        @endif
 
                         <!-- START: Dropdown Toggler for Desktop -->
-                        <div x-data="{ open: false }">
-                            <a class="nav-link dropdown-toggle mx-0 d-none d-lg-block" href="#" @click="open = !open">
-                                <img src="assets/images/avatar.png" alt="semina" width="60" />
+                        <div class="dropdown">
+                            <a
+                                class="nav-link dropdown-toggle mx-0 d-none d-lg-block"
+                                href="#"
+                                id="dropdownMenuLink"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                <img src="../assets/images/avatar.png" alt="semina" width="60" />
                             </a>
-                            <div x-show="open" @click.away="open = false">
-                                <x-dropdown-link href="#">Dashboard</x-dropdown-link>
-                                <x-dropdown-link href="#">Settings</x-dropdown-link>
-                                <x-dropdown-link href="#">Rewards</x-dropdown-link>
-                                <x-dropdown-link href="signin.html">Sign Out</x-dropdown-link>
-                            </div>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="#">Rewards</a></li>
+                                <li>
+                                    <form action="{{ route('participant.logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Sign Out</button>
+                                    </form>
+                                </li>
+                            </ul>
                         </div>
+                        
                         <!-- END: Dropdown Toggler for Desktop -->
 
                         <!-- START: Dropdown Toggler for Mobile -->

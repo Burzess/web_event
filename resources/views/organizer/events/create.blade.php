@@ -11,7 +11,7 @@
     @endif
     <div class="container">
         <h1>Tambah Event Baru</h1>
-        <form action="{{ route('events.store') }}" method="POST">
+        <form action="{{ route('organizer.events.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row">
@@ -33,14 +33,14 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <label for="date">Tanggal</label>
-                        <input type="date" class="form-control" name="date" required>
+                        <label for="date">Tanggal dan Waktu (format 24 jam)</label>
+                        <input type="datetime-local" class="form-control" name="date" required>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="category">Kategori</label>
-                        <select class="form-control" name="category">
+                        <select class="form-control" name="categories_id">
                             <option value="">Pilih Kategori</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -68,9 +68,9 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <label for="key_points">Key Points</label>
+                        <label for="keypoint">Key Points</label>
                         <div id="keypoint-container">
-                            <input type="text" class="form-control mb-2" name="key_points[]"
+                            <input type="text" class="form-control mb-2" name="keypoint[]"
                                 placeholder="Masukkan keypoint">
                         </div>
                         <button type="button" class="btn btn-secondary" id="add-keypoint">Tambah Keypoint</button>
@@ -83,7 +83,7 @@
                 <div class="col">
                     <div class="form-group">
                         <label for="speaker">Speaker</label>
-                        <select class="form-control" name="speaker">
+                        <select class="form-control" name="talent_id">
                             <option value="">Pilih Speaker</option>
                             @foreach ($talents as $talent)
                                 <option value="{{ $talent->id }}">{{ $talent->name }}</option>
@@ -149,7 +149,7 @@
                 newKeypoint.classList.add('input-group', 'mb-2');
 
                 newKeypoint.innerHTML = `
-                    <input type="text" class="form-control" name="key_points[]" placeholder="Masukkan keypoint">
+                    <input type="text" class="form-control" name="keypoint[]" placeholder="Masukkan keypoint">
                     <div class="input-group-append">
                         <button class="btn btn-danger" type="button" onclick="removeKeypoint(this)">X</button>
                     </div>

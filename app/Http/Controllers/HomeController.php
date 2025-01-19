@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Participant;
+use App\Models\Talent;
 use Illuminate\Http\Request;
 use App\Models\Event;
 
@@ -27,7 +29,10 @@ class HomeController extends Controller
         $events = Event::with('ticketCategories')
                         ->where('status', 'active')
                         ->get();
-        \Log::info($events);
-        return view('pages.home', compact('events'));
+        $totalEvents = Event::count();
+        $totalParticipants = Participant::count();
+        $totalTalents = Talent::count();
+
+        return view('pages.home', compact('events', 'totalEvents', 'totalParticipants', 'totalTalents'));
     }
 }

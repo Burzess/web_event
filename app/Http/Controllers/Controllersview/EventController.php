@@ -12,7 +12,7 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::with('ticketCategories', 'categories', 'image', 'talent')->get();
+        $events = Event::with('ticketCategories', 'categories', 'image', 'talent')->where('user_id', auth()->id())->get();
         \Log::info($events);
         return view('organizer.events.index', compact('events'));
     }
@@ -26,9 +26,10 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info("image:".$request->file('cover'));
         \Log::info($request);
+
         try {
-            // Validasi untuk event
             $eventValidated = $request->validate([
                 'title' => 'required|string|max:255|unique:events,title',
                 'date' => 'required|date',
@@ -37,9 +38,8 @@ class EventController extends Controller
                 'keypoint' => 'nullable|array',
                 'venue_name' => 'required|string|max:255',
                 'categories_id' => 'nullable|exists:categories,id',
-                'image_id' => 'nullable|exists:images,id',
+                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'talent_id' => 'nullable|exists:talents,id',
-                'key_points' => 'nullable|array',
             ], [
                 'title.required' => 'Judul acara harus diisi.',
                 'title.unique' => 'Judul acara sudah digunakan.',
@@ -48,8 +48,16 @@ class EventController extends Controller
                 'venue_name.required' => 'Nama venue harus diisi.',
             ]);
 
-            $eventValidated['key_points'] = json_encode($request->key_points);
+            if ($request->file('cover')) {
+                $image = \App\Models\Image::create([
+                    'name' => $request->file('cover')->getClientOriginalName(),
+                    'file_path' => $request->file('cover')->store('images', 'public'),
+                ]);
+                $eventValidated['image_id'] = $image->id;
+            }
+
             $eventValidated['status'] = 'inactive';
+            $eventValidated['user_id'] = auth()->id();
             $event = Event::create($eventValidated);
 
             $ticketCategoriesValidated = $request->validate([
@@ -65,7 +73,6 @@ class EventController extends Controller
             ]);
 
             foreach ($ticketCategoriesValidated['ticket_categories'] as $ticketData) {
-                // \Log::info($ticketData['type']);
                 $ticketData['event_id'] = $event->id;
                 $ticketData['stock'] = $ticketData['sum_ticket'];
                 $ticketData['type'] = $ticketData['type'] ?? 'regular';
@@ -77,6 +84,16 @@ class EventController extends Controller
             \Log::error('Error creating event: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal membuat acara.' . $e->getMessage())->withInput();
         }
+    }
+
+    public function show(Event $event)
+    {
+        $event->load('ticketCategories', 'categories', 'image', 'talent');
+        
+        $similarEvents = Event::where('categories_id', $event->categories_id)
+                            ->where('id', '!=', $event->id)
+                            ->get();
+        return view('pages.detail_event', compact('event', 'similarEvents'));
     }
 
     public function edit(Event $event)
@@ -109,7 +126,7 @@ class EventController extends Controller
             $event = Event::findOrFail($id);
             $event->update(['status' => 'active']);
 
-            return redirect()->route('organizer.events.index')->with('success', 'Acara berhasil disetujui.');
+            return redirect()->route('owner.events.index')->with('success', 'Acara berhasil disetujui.');
         } catch (\Exception $e) {
             \Log::error('Error approving event: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menyetujui acara. ' . $e->getMessage());

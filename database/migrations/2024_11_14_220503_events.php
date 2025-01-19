@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id(); 
             $table->string('title');
-            $table->date('date');
+            $table->dateTime('date');
             $table->text('about');
             $table->string('tagline')->nullable();
             $table->json('keypoint')->nullable();
